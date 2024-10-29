@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 function Header() {
   const BookIcon = (
     <svg
@@ -19,9 +20,9 @@ function Header() {
   return (
     <header className="bg-blue-900 text-white flex justify-between items-center p-4">
       <nav className="flex items-center justify-between w-full container mx-auto">
-        <h1 className="text-2xl font-bold flex items-center gap-2">
+        <Link to={"/"} className="text-2xl font-bold flex items-center gap-2">
           {BookIcon}PassportCourses
-        </h1>
+        </Link>
         <ul className="flex gap-4">
           <li>
             <a href="/courses">Cursos</a>

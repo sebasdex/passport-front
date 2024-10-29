@@ -6,7 +6,7 @@ function layout() {
   return (
     <div className="flex flex-col justify-between min-h-dvh">
       <Header />
-      <main className="container mx-auto">
+      <main className="container mx-auto flex-1">
         <Outlet />
       </main>
       <Footer />

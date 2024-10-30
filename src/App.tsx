@@ -53,9 +53,8 @@ function App() {
   return (
     <>
       <section
-        className={`${
-          currentPage === 0 ? "bg-blue-900" : "bg-white"
-        } text-white min-h-[39rem] rounded-xl shadow-lg max-w-screen-xl mt-10 p-7 flex flex-col 
+        className={`${currentPage === 0 ? "bg-blue-900" : "bg-white"
+          } text-white min-h-[39rem] rounded-xl shadow-lg w-full max-w-screen-xl mt-10 p-7 flex flex-col 
         gap-4 justify-between relative`}
       >
         <button

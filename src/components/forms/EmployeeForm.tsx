@@ -1,4 +1,5 @@
 import { useForm, SubmitHandler } from "react-hook-form";
+import { toast } from 'react-toastify';
 interface EmployeeFormProps {
   employeeNumber: string;
   name: string;
@@ -9,6 +10,28 @@ interface EmployeeFormProps {
 }
 
 function EmployeeForm() {
+  const showAlert = () => {
+    toast.success("¡Datos enviados correctamente!", {
+      position: "top-right",
+      autoClose: 3000, // 3 segundos
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+  }
+  const showError = () => {
+    toast.error("¡Error! No se pudo enviar los datos", {
+      position: "top-right",
+      autoClose: 3000, // 3 segundos
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+  }
   const { register, handleSubmit, formState: { errors }, reset } = useForm<EmployeeFormProps>();
   const onSubmit: SubmitHandler<EmployeeFormProps> = async (data) => {
     try {
@@ -21,8 +44,10 @@ function EmployeeForm() {
       });
       if (response.ok) {
         console.log('Datos enviados correctamente', response);
+        showAlert();
         reset();
       } else {
+        showError();
         console.log('Error al enviar los datos', response);
       }
     } catch (error) {

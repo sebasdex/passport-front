@@ -5,7 +5,7 @@ import App from "./App";
 import Layout from "./Layout";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import CoursesForm from "./components/forms/CoursesForm";
-import EmployeeForm from "./components/forms/EmployeeForm";
+import Employees from "./components/Employees";
 
 const router = createBrowserRouter([
   {
@@ -21,7 +21,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/employees",
-        element: <EmployeeForm />,
+        element: <Employees />,
       },
     ],
   },

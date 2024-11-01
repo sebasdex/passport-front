@@ -1,15 +1,20 @@
+import { useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
+import { useParams, useNavigate } from "react-router-dom";
+
 interface EmployeeFormProps {
-  employeeNumber: string;
-  name: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  area: string;
+  employeeNumber?: string;
+  name?: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  area?: string;
 }
 
 function EmployeeForm() {
+  const { id } = useParams();
+  const navigate = useNavigate();
   const showAlert = () => {
     toast.success("¡Datos enviados correctamente!", {
       position: "top-right",
@@ -36,7 +41,36 @@ function EmployeeForm() {
     handleSubmit,
     formState: { errors },
     reset,
+    setValue,
   } = useForm<EmployeeFormProps>();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (id) {
+        try {
+          const response = await fetch(`http://localhost:3000/api/getEmployee/${id}`);
+          if (response.ok) {
+            const data = await response.json();
+            setValue("employeeNumber", data.employee.employeeNumber);
+            setValue("name", data.employee.name);
+            setValue("firstName", data.employee.firstName);
+            setValue("lastName", data.employee.lastName);
+            setValue("email", data.employee.email);
+            setValue("area", data.employee.area);
+          } else {
+            showError("Error al cargar los datos del empleado");
+          }
+        } catch (error) {
+          showError("Error de servidor: " + error);
+        }
+      } else {
+        console.error("No se ha proporcionado el id");
+      }
+    };
+    fetchData();
+  }, [id, setValue]);
+
+
   const onSubmit: SubmitHandler<EmployeeFormProps> = async (data) => {
     try {
       const response = await fetch("http://localhost:3000/api/addEmployee", {
@@ -60,13 +94,23 @@ function EmployeeForm() {
     }
   };
 
+  const handleNewEmployee = () => {
+    navigate("/employees");
+    reset();
+  };
+
+
   return (
-    <section className="flex flex-col gap-4 p-4 justify-center items-center">
+    <section className="flex flex-col gap-4 p-4">
+      <h1 className="text-3xl font-bold">Formulario de empleados</h1>
+      <button className="text-blue-900 font-semibold bg-blue-200 p-2 rounded-md" onClick={() => handleNewEmployee()}>
+        Nuevo registro
+      </button>
       <form
-        className="flex flex-col gap-4 p-4 justify-center max-w-screen-xl"
+        className="flex flex-col gap-4"
         onSubmit={handleSubmit(onSubmit)}
       >
-        <h1 className="text-3xl font-bold">Formulario de empleados</h1>
+
         <label htmlFor="employeeNumber" className="text-blue-900 font-semibold">
           N° de empleado
         </label>
@@ -166,7 +210,7 @@ function EmployeeForm() {
         )}
 
         <button className="bg-blue-900 mt-8 text-white rounded-md p-2 text-lg hover:bg-opacity-85 transition-all duration-300">
-          Guardar
+          {id ? "Actualizar" : "Registrar"}
         </button>
       </form>
     </section>

@@ -9,6 +9,7 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useNavigate } from "react-router-dom";
 
 interface Employee {
   id: number;
@@ -25,6 +26,8 @@ export default function StickyHeadTable() {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [rows, setRows] = useState<Employee[]>([]);
 
+  const navigate = useNavigate();
+
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
@@ -34,6 +37,10 @@ export default function StickyHeadTable() {
   ) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
+  };
+
+  const handleClick = (id: number) => {
+    navigate(`/employees/${id}`);
   };
 
   useEffect(() => {
@@ -103,10 +110,14 @@ export default function StickyHeadTable() {
                         {row.area}
                       </TableCell>
                       <TableCell className="flex justify-end">
-                        <a href={`/employees/${row.id}`}>{<EditIcon />}</a>
+                        <button onClick={() => handleClick(row.id)}>
+                          {<EditIcon />}
+                        </button>
                       </TableCell>
                       <TableCell className="flex justify-end">
-                        <a href={`/employees/${row.id}`}>{<DeleteIcon className="text-red-500 hover:text-red-700 hover:cursor-pointer" />}</a>
+                        <a href={`/employees/${row.id}`}>
+                          {<DeleteIcon className="text-red-500 hover:text-red-700 hover:cursor-pointer" />}
+                        </a>
                       </TableCell>
                     </TableRow>
                   );

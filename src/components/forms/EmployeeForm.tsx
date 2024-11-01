@@ -1,5 +1,5 @@
 import { useForm, SubmitHandler } from "react-hook-form";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 interface EmployeeFormProps {
   employeeNumber: string;
   name: string;
@@ -20,50 +20,58 @@ function EmployeeForm() {
       draggable: true,
       progress: undefined,
     });
-  }
-  const showError = () => {
-    toast.error("¡Error! No se pudo enviar los datos", {
+  };
+  const showError = (error: string) => {
+    toast.error(error, {
       position: "top-right",
-      autoClose: 3000, // 3 segundos
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,
       draggable: true,
       progress: undefined,
     });
-  }
-  const { register, handleSubmit, formState: { errors }, reset } = useForm<EmployeeFormProps>();
+  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<EmployeeFormProps>();
   const onSubmit: SubmitHandler<EmployeeFormProps> = async (data) => {
     try {
-      const response = await fetch('http://localhost:3000/api/addEmployee', {
-        method: 'POST',
+      const response = await fetch("http://localhost:3000/api/addEmployee", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
       });
       if (response.ok) {
-        console.log('Datos enviados correctamente', response);
+        console.log("Datos enviados correctamente", response);
         showAlert();
         reset();
       } else {
-        showError();
-        console.log('Error al enviar los datos', response);
+        showError("Error al enviar los datos");
+        console.log("Error al enviar los datos", response);
       }
     } catch (error) {
-      console.error('Error al enviar los datos', error);
+      showError("Error de servidor");
+      console.error("Error al enviar los datos", error);
     }
   };
 
   return (
     <section className="flex flex-col gap-4 p-4 justify-center items-center">
-      <form className="flex flex-col gap-4 p-4 justify-center max-w-screen-xl"
-        onSubmit={handleSubmit(onSubmit)}>
-        <h1 className="text-4xl font-bold">Formulario de empleados</h1>
+      <form
+        className="flex flex-col gap-4 p-4 justify-center max-w-screen-xl"
+        onSubmit={handleSubmit(onSubmit)}
+      >
+        <h1 className="text-3xl font-bold">Formulario de empleados</h1>
         <label htmlFor="employeeNumber" className="text-blue-900 font-semibold">
           N° de empleado
         </label>
-        <input className="w-full border-2 border-blue-200 p-2 rounded-md"
+        <input
+          className="w-full border-2 border-blue-200 p-2 rounded-md"
           type="text"
           placeholder="Ej. EMP001"
           {...register("employeeNumber", { required: true })}

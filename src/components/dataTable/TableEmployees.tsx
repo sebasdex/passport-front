@@ -7,6 +7,8 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 interface Employee {
   id: number;
@@ -45,11 +47,11 @@ export default function StickyHeadTable() {
     } catch (error) {
       console.error("Error al obtener los empleados", error);
     }
-  }, []);
+  }, [rows]);
 
   return (
     <Paper sx={{ width: "100%", overflow: "hidden", marginTop: "10rem" }}>
-      <TableContainer sx={{ maxHeight: 440 }}>
+      <TableContainer sx={{ maxHeight: 500 }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
@@ -71,6 +73,8 @@ export default function StickyHeadTable() {
               <TableCell align="left" width={200}>
                 Area
               </TableCell>
+              <TableCell></TableCell>
+              <TableCell></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -97,6 +101,12 @@ export default function StickyHeadTable() {
                       </TableCell>
                       <TableCell align="left" width={200}>
                         {row.area}
+                      </TableCell>
+                      <TableCell className="flex justify-end">
+                        <a href={`/employees/${row.id}`}>{<EditIcon />}</a>
+                      </TableCell>
+                      <TableCell className="flex justify-end">
+                        <a href={`/employees/${row.id}`}>{<DeleteIcon className="text-red-500 hover:text-red-700 hover:cursor-pointer" />}</a>
                       </TableCell>
                     </TableRow>
                   );

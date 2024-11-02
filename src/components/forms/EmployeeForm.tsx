@@ -15,8 +15,8 @@ interface EmployeeFormProps {
 function EmployeeForm() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const showAlert = () => {
-    toast.success("¡Datos enviados correctamente!", {
+  const showAlert = (text: string) => {
+    toast.success(text, {
       position: "top-right",
       autoClose: 3000, // 3 segundos
       hideProgressBar: false,
@@ -63,8 +63,6 @@ function EmployeeForm() {
         } catch (error) {
           showError("Error de servidor: " + error);
         }
-      } else {
-        console.error("No se ha proporcionado el id");
       }
     };
     fetchData();
@@ -73,7 +71,13 @@ function EmployeeForm() {
 
   const onSubmit: SubmitHandler<EmployeeFormProps> = async (data) => {
     try {
-      const response = await fetch("http://localhost:3000/api/addEmployee", {
+      const response = id ? await fetch(`http://localhost:3000/api/updateEmployee/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }) : await fetch(`http://localhost:3000/api/addEmployee`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -81,16 +85,14 @@ function EmployeeForm() {
         body: JSON.stringify(data),
       });
       if (response.ok) {
-        console.log("Datos enviados correctamente", response);
-        showAlert();
-        reset();
+        showAlert(id ? "Datos actualizados correctamente" : "Datos registrados correctamente");
+        handleNewEmployee();
       } else {
-        showError("Error al enviar los datos");
-        console.log("Error al enviar los datos", response);
+        showError("Error al actualizar los datos del empleado");
       }
     } catch (error) {
-      showError("Error de servidor");
-      console.error("Error al enviar los datos", error);
+      console.error(error);
+      showError("Error de servidor: " + error);
     }
   };
 

@@ -11,6 +11,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import DialogAlert from "../DialogAlert";
 
 interface Employee {
   id: number;
@@ -143,9 +144,10 @@ export default function StickyHeadTable() {
                         </button>
                       </TableCell>
                       <TableCell className="flex justify-end">
-                        <button onClick={() => deleteEmployee(row.id)}>
-                          {<DeleteIcon className="text-red-500 hover:text-red-700 hover:cursor-pointer" />}
-                        </button>
+                        <DialogAlert
+                          iconButton={<DeleteIcon className="text-red-500 hover:text-red-700 hover:cursor-pointer" />}
+                          handleConfirm={() => deleteEmployee(row.id)}
+                        />
                       </TableCell>
                     </TableRow>
                   );

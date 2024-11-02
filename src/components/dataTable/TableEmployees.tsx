@@ -10,6 +10,7 @@ import TableRow from "@mui/material/TableRow";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 interface Employee {
   id: number;
@@ -43,6 +44,18 @@ export default function StickyHeadTable() {
     navigate(`/employees/${id}`);
   };
 
+  const showAlert = (text: string) => {
+    toast.success(text, {
+      position: "top-right",
+      autoClose: 3000, // 3 segundos
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+  };
+
   useEffect(() => {
     try {
       async function fetchData() {
@@ -55,6 +68,21 @@ export default function StickyHeadTable() {
       console.error("Error al obtener los empleados", error);
     }
   }, [rows]);
+
+  const deleteEmployee = async (id: number): Promise<void> => {
+    try {
+      const response = await fetch(`http://localhost:3000/api/deleteEmployee/${id}`, {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        showAlert("Empleado eliminado correctamente");
+      } else {
+        console.error("Error al eliminar empleado", response);
+      }
+    } catch (error) {
+      console.error("Error al eliminar empleado", error);
+    }
+  };
 
   return (
     <Paper sx={{ width: "100%", overflow: "hidden", marginTop: "10rem" }}>
@@ -115,9 +143,9 @@ export default function StickyHeadTable() {
                         </button>
                       </TableCell>
                       <TableCell className="flex justify-end">
-                        <a href={`/employees/${row.id}`}>
+                        <button onClick={() => deleteEmployee(row.id)}>
                           {<DeleteIcon className="text-red-500 hover:text-red-700 hover:cursor-pointer" />}
-                        </a>
+                        </button>
                       </TableCell>
                     </TableRow>
                   );

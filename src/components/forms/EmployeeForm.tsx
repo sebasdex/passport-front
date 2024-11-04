@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useParams, useNavigate } from "react-router-dom";
+import ResponsiveDialog from "../DialogAlert";
 
 interface EmployeeFormProps {
   employeeNumber?: string;
@@ -48,7 +49,9 @@ function EmployeeForm() {
     const fetchData = async () => {
       if (id) {
         try {
-          const response = await fetch(`http://localhost:3000/api/getEmployee/${id}`);
+          const response = await fetch(
+            `http://localhost:3000/api/getEmployee/${id}`
+          );
           if (response.ok) {
             const data = await response.json();
             setValue("employeeNumber", data.employee.employeeNumber);
@@ -68,24 +71,29 @@ function EmployeeForm() {
     fetchData();
   }, [id, setValue]);
 
-
   const onSubmit: SubmitHandler<EmployeeFormProps> = async (data) => {
     try {
-      const response = id ? await fetch(`http://localhost:3000/api/updateEmployee/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      }) : await fetch(`http://localhost:3000/api/addEmployee`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+      const response = id
+        ? await fetch(import.meta.env.VITE_HOST + "/api/updateEmployee/" + id, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          })
+        : await fetch(`http://localhost:3000/api/addEmployee`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          });
       if (response.ok) {
-        showAlert(id ? "Datos actualizados correctamente" : "Datos registrados correctamente");
+        showAlert(
+          id
+            ? "Datos actualizados correctamente"
+            : "Datos registrados correctamente"
+        );
         handleNewEmployee();
       } else {
         showError("Error al actualizar los datos del empleado");
@@ -101,18 +109,16 @@ function EmployeeForm() {
     reset();
   };
 
-
   return (
     <section className="flex flex-col gap-4 p-4">
       <h1 className="text-3xl font-bold">Formulario de empleados</h1>
-      <button className="text-blue-900 font-semibold bg-blue-200 p-2 rounded-md" onClick={() => handleNewEmployee()}>
+      <button
+        className="text-blue-900 font-semibold bg-blue-200 p-2 rounded-md"
+        onClick={() => handleNewEmployee()}
+      >
         Nuevo registro
       </button>
-      <form
-        className="flex flex-col gap-4"
-        onSubmit={handleSubmit(onSubmit)}
-      >
-
+      <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
         <label htmlFor="employeeNumber" className="text-blue-900 font-semibold">
           N° de empleado
         </label>
@@ -211,9 +217,25 @@ function EmployeeForm() {
           </p>
         )}
 
-        <button className="bg-blue-900 mt-8 text-white rounded-md p-2 text-lg hover:bg-opacity-85 transition-all duration-300">
+        {/* <button className="bg-blue-900 mt-8 text-white rounded-md p-2 text-lg hover:bg-opacity-85 transition-all duration-300">
           {id ? "Actualizar" : "Registrar"}
-        </button>
+        </button> */}
+
+        <ResponsiveDialog
+          iconButton={id ? "Actualizar" : "Registrar"}
+          handleConfirm={handleSubmit(onSubmit)}
+          buttonText={id ? "Actualizar" : "Registrar"}
+          dialogText={
+            id
+              ? "Los datos actualizados se guardarán en la base de datos tal y como lo ingresaste"
+              : "Los datos se guardarán en la base de datos tal y como lo ingresaste"
+          }
+          dialogQuestion={
+            id
+              ? "¿Estás seguro de que deseas actualizar este registro?"
+              : "¿Estás seguro de que deseas registrar este formulario?"
+          }
+        />
       </form>
     </section>
   );

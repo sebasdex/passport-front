@@ -147,6 +147,10 @@ export default function StickyHeadTable() {
                         <DialogAlert
                           iconButton={<DeleteIcon className="text-red-500 hover:text-red-700 hover:cursor-pointer" />}
                           handleConfirm={() => deleteEmployee(row.id)}
+                          dialogQuestion="¿Está seguro de eliminar este empleado?"
+                          dialogText="Esta acción no se puede deshacer y eliminará permanentemente el empleado."
+                          buttonText="Eliminar"
+                          buttonColorText="error"
                         />
                       </TableCell>
                     </TableRow>

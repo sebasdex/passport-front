@@ -14,6 +14,8 @@ interface DialogAlertProps {
   buttonText?: string;
   dialogText?: string;
   dialogQuestion?: string;
+  className?: string;
+  buttonColorText?: "primary" | "secondary" | "error" | "info" | "success" | "warning";
 }
 
 export default function ResponsiveDialog({
@@ -22,11 +24,12 @@ export default function ResponsiveDialog({
   buttonText,
   dialogText,
   dialogQuestion,
+  buttonColorText,
+  className
 }: DialogAlertProps) {
-  const [open, setOpen] = React.useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
-
+  const [open, setOpen] = React.useState(false);
   const handleClickOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     setOpen(true);
@@ -36,9 +39,16 @@ export default function ResponsiveDialog({
     setOpen(false);
   };
 
+  const handleConfirmAndClose = () => {
+    if (handleConfirm) {
+      handleConfirm(); // Llama a la función de confirmar
+    }
+    handleClose(); // Llama a la función para cerrar el diálogo
+  };
+
   return (
     <React.Fragment>
-      <button onClick={handleClickOpen}>{iconButton}</button>
+      <button className={className} onClick={handleClickOpen}>{iconButton}</button>
       <Dialog
         fullScreen={fullScreen}
         open={open}
@@ -53,7 +63,8 @@ export default function ResponsiveDialog({
           <Button autoFocus onClick={handleClose}>
             Cancelar
           </Button>
-          <Button onClick={handleConfirm} autoFocus>
+          <Button onClick={handleConfirmAndClose} autoFocus variant="contained" color={buttonColorText}>
+
             {buttonText}
           </Button>
         </DialogActions>

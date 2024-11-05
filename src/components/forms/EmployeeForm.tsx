@@ -27,6 +27,7 @@ function EmployeeForm() {
       progress: undefined,
     });
   };
+
   const showError = (error: string) => {
     toast.error(error, {
       position: "top-right",
@@ -74,20 +75,20 @@ function EmployeeForm() {
   const onSubmit: SubmitHandler<EmployeeFormProps> = async (data) => {
     try {
       const response = id
-        ? await fetch(import.meta.env.VITE_HOST + "/api/updateEmployee/" + id, {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-          })
+        ? await fetch(`http://localhost:3000/api/updateEmployee/${id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        })
         : await fetch(`http://localhost:3000/api/addEmployee`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-          });
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
       if (response.ok) {
         showAlert(
           id
@@ -118,7 +119,7 @@ function EmployeeForm() {
       >
         Nuevo registro
       </button>
-      <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
+      <form className="flex flex-col gap-4">
         <label htmlFor="employeeNumber" className="text-blue-900 font-semibold">
           N° de empleado
         </label>
@@ -217,14 +218,11 @@ function EmployeeForm() {
           </p>
         )}
 
-        {/* <button className="bg-blue-900 mt-8 text-white rounded-md p-2 text-lg hover:bg-opacity-85 transition-all duration-300">
-          {id ? "Actualizar" : "Registrar"}
-        </button> */}
-
         <ResponsiveDialog
           iconButton={id ? "Actualizar" : "Registrar"}
           handleConfirm={handleSubmit(onSubmit)}
-          buttonText={id ? "Actualizar" : "Registrar"}
+          buttonText={id ? "Actualizar" : "Aceptar"}
+          className="text-white font-semibold bg-blue-900 p-2 rounded-md hover:bg-blue-800 transition-all duration-300"
           dialogText={
             id
               ? "Los datos actualizados se guardarán en la base de datos tal y como lo ingresaste"

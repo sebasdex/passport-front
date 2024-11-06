@@ -4,8 +4,8 @@ import "./index.css";
 import App from "./App";
 import Layout from "./Layout";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import CoursesForm from "./components/forms/CoursesForm";
 import Employees from "./components/Employees";
+import Courses from "./components/Courses";
 
 const router = createBrowserRouter([
   {
@@ -17,7 +17,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/courses",
-        element: <CoursesForm />,
+        element: <Courses />,
       },
       {
         path: "/employees",

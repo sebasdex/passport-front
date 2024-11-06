@@ -51,7 +51,6 @@ function CoursesForm() {
         const response = await fetch("http://localhost:3000/api/getEmployees");
         const data = await response.json();
         setEmployees(data.employees);
-        console.log("Datos obtenidos: ", data.employees);
       };
       getEmployees();
     } catch (error) {
@@ -163,7 +162,7 @@ function CoursesForm() {
           <option value="">-- Selecciona una opción --</option>
           {employees.map((employee) => (
             <option key={employee.id} value={employee.id}>
-              {employee.name}
+              {`${employee.name} ${employee.firstName} ${employee.lastName}`}
             </option>
           ))}
         </select>
@@ -204,8 +203,8 @@ function CoursesForm() {
           iconButton={'Registrar'}
           className="text-white font-semibold bg-blue-900 p-2 rounded-md hover:bg-blue-800 transition-all duration-300"
           buttonText="Aceptar"
-          dialogText="¿Estás seguro de que deseas registrar este formulario?"
-          dialogQuestion="Confirmación"
+          dialogText="Los datos se guardarán en la base de datos tal y como lo ingresaste"
+          dialogQuestion="¿Estás seguro de que deseas registrar estos datos?"
           handleConfirm={handleSubmit(onSubmit)}
         />
       </form>

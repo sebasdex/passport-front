@@ -1,33 +1,28 @@
+interface Employee {
+  id: number;
+  employeeNumber: string;
+  name: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  area: string;
+}
 interface Courses {
   id: number;
   courseName: string;
-  courseDescription: string;
+  description: string;
   startDate: string;
   endDate: string;
-  coachName: string;
-  departmentName: string;
+  instructor: string;
   approved: boolean;
-  placeName: string;
-  employeeName: string;
-  employeeNumber: string;
+  place: string;
+  studentId: number;
+  student: Employee;
 }
-function InfoCoursesEmployee() {
-  const courses: Courses[] = [
-    {
-      id: 234234,
-      courseName: "Curso de React",
-      courseDescription: "Curso para aprender React",
-      startDate: "2023-01-01",
-      endDate: "2023-01-31",
-      coachName: "Ivan le Roux",
-      departmentName: "Marketing",
-      approved: true,
-      placeName: "Madrid",
-      employeeName: "Jane Doe",
-      employeeNumber: "EMP12345",
-    },
-  ];
-
+type InfoCoursesEmployeeProps = {
+  dataCourse: Courses[];
+};
+function InfoCoursesEmployee({ dataCourse }: InfoCoursesEmployeeProps) {
   const checkApproved = (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -44,50 +39,47 @@ function InfoCoursesEmployee() {
       />
     </svg>
   );
-
   return (
     <>
-      {courses.map((course) => (
-        <>
+      {dataCourse.map((course) => (
+        <div key={course.id} className="border-2 border-blue-200 rounded-xl p-4 flex flex-col gap-4 justify-between min-h-[35rem]">
           <header className="flex gap-4 p-2 justify-between items-center border-b-2 border-blue-200 text-blue-900">
             <div>
-              <p className="text-3xl font-bold ">{course.placeName}</p>
-              <p className="text-blue-600">{course.departmentName}</p>
+              <p className="text-3xl font-bold">{course.place}</p>
+              <p className="text-blue-600">{course.student.area}</p>
             </div>
             <div>
-              <p className="text-xl font-bold">{course.employeeName}</p>
-              <p>{course.employeeNumber}</p>
+              <p className="text-xl font-bold">{`${course.student.name} ${course.student.firstName} ${course.student.lastName}`}</p>
+              <p>{course.student.employeeNumber}</p>
             </div>
           </header>
           <article className="flex-1 space-y-2 text-blue-900">
             <h1 className="text-2xl font-bold capitalize text-blue-600">
               {course.courseName}
             </h1>
-            <p>{course.courseDescription}</p>
+            <p>{course.description}</p>
             <p className="font-bold">
               Instructor:{" "}
-              <span className="font-normal">{course.coachName}</span>
+              <span className="font-normal">{course.instructor}</span>
             </p>
 
-            <p className="text-green-600 font-bold">
-              Completado el: {course.endDate}
+            <p className={`text-green-600 font-bold ${course.endDate ? "" : "text-red-500"}`}>
+              <span className="text-blue-900">Completado el:</span> {course.endDate ? new Date(course.endDate).toLocaleDateString('es-ES', { month: 'long', day: 'numeric', year: 'numeric' }) : "No finalizado"}
             </p>
           </article>
           <footer className="flex justify-between items-end">
-            <p className="text-blue-900">
-              Fecha del curso: {course.startDate} - {course.endDate}
+            <p className="text-blue-800 italic">
+              Fecha del curso: {new Date(course.startDate).toLocaleDateString('es-ES', { month: 'long', day: 'numeric', year: 'numeric' })} - {course.endDate ? new Date(course.endDate).toLocaleDateString('es-ES', { month: 'long', day: 'numeric', year: 'numeric' }) : "Sin fecha de finalización"}
             </p>
-            <div className="h-32 w-32 rotate-12 rounded-full bg-green-300 text-green-600 flex flex-col items-center justify-center">
+            <div className={`h-32 w-32 rotate-12 rounded-full  flex flex-col items-center justify-center ${course.approved ? "bg-green-300 text-green-600" : "bg-red-500 text-white"}`}>
               {checkApproved}
               <p className="text-lg font-bold uppercase flex flex-col items-center">
                 {course.approved ? "Aprobado" : "Pendiente"}
-                <span className="block text-sm font-normal">
-                  {course.endDate}
-                </span>
+                <span className="block text-sm font-normal">{course.endDate ? new Date(course.endDate).toLocaleDateString('es-ES') : ""}</span>
               </p>
             </div>
           </footer>
-        </>
+        </div>
       ))}
     </>
   );

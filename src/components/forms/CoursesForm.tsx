@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import DialogAlert from "../DialogAlert";
 import { toast } from "react-toastify";
+import { useParams, useNavigate } from "react-router-dom";
 interface CoursesFormProps {
   courseName?: string;
   description?: string;
@@ -10,7 +11,7 @@ interface CoursesFormProps {
   instructor?: string;
   approved?: boolean;
   place?: string;
-  studentId?: string;
+  studentId?: number;
 }
 interface Employee {
   id: number;
@@ -22,8 +23,10 @@ interface Employee {
   area: string;
 }
 function CoursesForm() {
-  const { register, handleSubmit, formState: { errors }, reset } = useForm<CoursesFormProps>();
+  const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm<CoursesFormProps>();
   const [employees, setEmployees] = useState<Employee[]>([]);
+  const { id } = useParams();
+  const navigate = useNavigate();
   const showAlert = (text: string) => {
     toast.success(text, {
       position: "top-right",
@@ -45,6 +48,39 @@ function CoursesForm() {
       progress: undefined,
     });
   };
+
+  const handleNewCourse = () => {
+    navigate("/courses");
+    reset();
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (id) {
+        try {
+          const response = await fetch(`http://localhost:3000/api/getCourse/${id}`);
+          if (response.ok) {
+            const data = await response.json()
+            setValue("courseName", data.course.courseName);
+            setValue("description", data.course.description);
+            setValue("startDate", data.course.startDate ? new Date(data.course.startDate).toLocaleDateString('en-CA') : "");
+            setValue("endDate", data.course.endDate ? new Date(data.course.endDate).toLocaleDateString('en-CA') : "");
+            setValue("instructor", data.course.instructor);
+            setValue("approved", data.course.approved);
+            setValue("studentId", data.course.studentId);
+            setValue("place", data.course.place);
+          } else {
+            showError("Error al cargar los datos del curso")
+          }
+        } catch (error) {
+          console.error("Error al cargar los datos del curso", error);
+        }
+      }
+    }
+    fetchData();
+  }, [id, setValue]);
+
+
   useEffect(() => {
     try {
       const getEmployees = async () => {
@@ -58,17 +94,27 @@ function CoursesForm() {
     }
   }, []);
   const onSubmit: SubmitHandler<CoursesFormProps> = async (data) => {
+    if (data.studentId) {
+      data.studentId = Number(data.studentId);
+    }
+    console.log("Datos enviados: ", data);
     try {
-      const response = await fetch("http://localhost:3000/api/addCourse", {
+      const response = id ? await fetch(`http://localhost:3000/api/updateCourse/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data)
+      }) : await fetch(`http://localhost:3000/api/addCourse`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(data)
       });
       if (response.ok) {
-        showAlert("Datos guardados correctamente");
-        reset();
+        showAlert(id ? "Datos actualizados correctamente" : "Datos guardados correctamente");
+        handleNewCourse();
         return;
       }
       showError("Error al guardar los datos");
@@ -143,8 +189,10 @@ function CoursesForm() {
           aria-invalid={errors.instructor ? "true" : "false"}
         >
           <option value="">-- Selecciona una opción --</option>
-          <option value="1">Ivan le Roux</option>
-          <option value="2">John Doe</option>
+          <option value="Ivan le Roux">Ivan le Roux</option>
+          <option value="John Doe">John Doe</option>
+          <option value="Jane Doe">Jane Doe</option>
+          <option value="Robert Johnson">Robert Johnson</option>
         </select>
         {errors.instructor?.type === "required" && (
           <p role="alert" className="text-red-500 -mt-2 font-semibold text-sm">
@@ -188,11 +236,11 @@ function CoursesForm() {
           aria-invalid={errors.place ? "true" : "false"}
         >
           <option value="">-- Selecciona una opción --</option>
-          <option value="1">En línea</option>
-          <option value="2">Sucursal uno</option>
-          <option value="3">Sucursal dos</option>
-          <option value="4">Planta principal</option>
-          <option value="5">Sucursal Mexico</option>
+          <option value="En línea">En línea</option>
+          <option value="Sucursal uno">Sucursal uno</option>
+          <option value="Sucursal dos">Sucursal dos</option>
+          <option value="Planta principal">Planta principal</option>
+          <option value="Sucursal Mexico">Sucursal Mexico</option>
         </select>
         {errors.place?.type === "required" && (
           <p role="alert" className="text-red-500 -mt-2 font-semibold text-sm">
@@ -200,11 +248,11 @@ function CoursesForm() {
           </p>
         )}
         <DialogAlert
-          iconButton={'Registrar'}
+          iconButton={id ? "Actualizar" : "Registrar"}
           className="text-white font-semibold bg-blue-900 p-2 rounded-md hover:bg-blue-800 transition-all duration-300"
-          buttonText="Aceptar"
-          dialogText="Los datos se guardarán en la base de datos tal y como lo ingresaste"
-          dialogQuestion="¿Estás seguro de que deseas registrar estos datos?"
+          buttonText={id ? "Actualizar" : "Aceptar"}
+          dialogText={id ? "Los datos se actualizarán en la base de datos tal y como lo ingresaste" : "Los datos se guardarán en la base de datos tal y como lo ingresaste"}
+          dialogQuestion={id ? "¿Estás seguro de que deseas actualizar estos datos?" : "¿Estás seguro de que deseas registrar estos datos?"}
           handleConfirm={handleSubmit(onSubmit)}
         />
       </form>

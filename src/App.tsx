@@ -69,7 +69,6 @@ function App() {
       response.then((res) => res.json()).then((data) => {
         if (data.courses) {
           setDataCourse(data.courses);
-          console.log(data.courses);
         }
       });
     } catch (error) {
@@ -78,6 +77,7 @@ function App() {
   }, []);
 
   const filteredCourses = dataCourse.filter(course => course.studentId === 2);
+  const employeeData = dataCourse.find(course => course.studentId === 2)?.student;
 
   const handleClickNext = () => {
     if (currentPage < filteredCourses.length) {
@@ -92,7 +92,7 @@ function App() {
   };
 
   const currentComponent = currentPage === 0 ? (
-    <PassportCover />
+    <PassportCover employee={employeeData} />
   ) : (
     <InfoCoursesEmployee dataCourse={[filteredCourses[currentPage - 1]]} />
   );

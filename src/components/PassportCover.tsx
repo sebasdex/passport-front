@@ -1,4 +1,16 @@
-function PassportCover() {
+interface Employee {
+  name: string;
+  firstName: string;
+  lastName: string;
+  employeeNumber: string;
+  area: string;
+}
+
+type PassportCoverProps = {
+  employee: Employee | undefined;
+};
+
+function PassportCover({ employee }: PassportCoverProps) {
   const WorldIcon = (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -26,19 +38,21 @@ function PassportCover() {
           {WorldIcon}
         </div>
       </header>
-      <article className="flex flex-col gap-4 p-4 justify-center items-center">
-        <img
-          src="https://picsum.photos/id/1003/200/300"
-          alt="employee"
-          className="rounded-full h-40 w-40 object-cover object-bottom border-4 border-yellow-400"
-        />
-        <h2 className="text-4xl font-bold mt-4">Jane Doe</h2>
-        <p className="text-xl text-blue-200 -mt-2">EMP12345</p>
-        <p className="text-lg text-blue-200 -mt-3">Marketing</p>
-        <span className="text-xl text-blue-200 italic mt-6">
-          Embark on your global learning journey
-        </span>
-      </article>
+      {employee && (
+        <article className="flex flex-col gap-4 p-4 justify-center items-center">
+          <img
+            src="https://picsum.photos/id/1003/200/300"
+            alt="employee"
+            className="rounded-full h-40 w-40 object-cover object-bottom border-4 border-yellow-400"
+          />
+          <h2 className="text-4xl font-bold mt-4">{`${employee.name} ${employee.firstName} ${employee.lastName}`}</h2>
+          <p className="text-xl text-blue-200 -mt-2">{employee.employeeNumber}</p>
+          <p className="text-lg text-blue-200 -mt-3">{employee.area}</p>
+          <span className="text-xl text-blue-200 italic mt-6">
+            Embark on your global learning journey
+          </span>
+        </article>
+      )}
       <div className="text-blue-200 text-sm self-end text-right">
         <p>Issue Date: 2023-01-01</p>
         <p>Expiration Date: 2023-01-31</p>

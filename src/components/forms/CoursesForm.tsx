@@ -123,9 +123,15 @@ function CoursesForm() {
     }
   };
   return (
-    <section className="flex flex-col gap-4 p-4 justify-center items-center">
-      <form className="flex flex-col gap-4 p-4 justify-center max-w-screen-xl">
-        <h1 className="text-4xl font-bold">Formulario de cursos</h1>
+    <section className="flex flex-col gap-4 p-4">
+      <h1 className="text-4xl font-bold">Formulario de cursos</h1>
+      <button
+        className="text-blue-900 font-semibold bg-blue-200 p-2 rounded-md hover:bg-blue-300 transition-all duration-300"
+        onClick={() => handleNewCourse()}
+      >
+        Nuevo registro
+      </button>
+      <form className="flex flex-col gap-4">
         <label htmlFor="name" className="text-blue-900 font-semibold">
           Nombre del curso
         </label>
@@ -249,7 +255,7 @@ function CoursesForm() {
         )}
         <DialogAlert
           iconButton={id ? "Actualizar" : "Registrar"}
-          className="text-white font-semibold bg-blue-900 p-2 rounded-md hover:bg-blue-800 transition-all duration-300"
+          className="text-white font-semibold bg-blue-900 p-2 rounded-md hover:bg-blue-800 transition-all duration-300 mt-6"
           buttonText={id ? "Actualizar" : "Aceptar"}
           dialogText={id ? "Los datos se actualizarán en la base de datos tal y como lo ingresaste" : "Los datos se guardarán en la base de datos tal y como lo ingresaste"}
           dialogQuestion={id ? "¿Estás seguro de que deseas actualizar estos datos?" : "¿Estás seguro de que deseas registrar estos datos?"}

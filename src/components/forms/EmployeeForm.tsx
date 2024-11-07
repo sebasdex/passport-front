@@ -114,7 +114,7 @@ function EmployeeForm() {
     <section className="flex flex-col gap-4 p-4">
       <h1 className="text-3xl font-bold">Formulario de empleados</h1>
       <button
-        className="text-blue-900 font-semibold bg-blue-200 p-2 rounded-md"
+        className="text-blue-900 font-semibold bg-blue-200 p-2 rounded-md hover:bg-blue-300 transition-all duration-300"
         onClick={() => handleNewEmployee()}
       >
         Nuevo registro
@@ -222,7 +222,7 @@ function EmployeeForm() {
           iconButton={id ? "Actualizar" : "Registrar"}
           handleConfirm={handleSubmit(onSubmit)}
           buttonText={id ? "Actualizar" : "Aceptar"}
-          className="text-white font-semibold bg-blue-900 p-2 rounded-md hover:bg-blue-800 transition-all duration-300"
+          className="text-white font-semibold bg-blue-900 p-2 rounded-md hover:bg-blue-800 transition-all duration-300 mt-6"
           dialogText={
             id
               ? "Los datos actualizados se guardarán en la base de datos tal y como lo ingresaste"

@@ -27,6 +27,7 @@ interface Course {
     endDate: string;
     instructor: string;
     approved: boolean;
+    place: string;
     studentId: string;
     student: Employee;
 }
@@ -113,6 +114,9 @@ function TableCourses() {
                             <TableCell align="left" width={200}>
                                 Descripción
                             </TableCell>
+                            <TableCell align="left" width={200} className="text-center">
+                                Lugar
+                            </TableCell>
                             <TableCell align="left" width={200}>
                                 Inicio
                             </TableCell>
@@ -144,6 +148,9 @@ function TableCourses() {
                                             </TableCell>
                                             <TableCell align="left" width={200}>
                                                 {row.description}
+                                            </TableCell>
+                                            <TableCell align="left" width={200} className="text-center">
+                                                {row.place}
                                             </TableCell>
                                             <TableCell align="left" width={200}>
                                                 {row.startDate ? new Date(row.startDate).toLocaleDateString('es-ES', { month: 'short', day: 'numeric', year: 'numeric' }) : "No iniciado"}

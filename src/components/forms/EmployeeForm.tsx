@@ -182,7 +182,7 @@ function EmployeeForm() {
           </p>
         )}
 
-        <label htmlFor="coach" className="text-blue-900 font-semibold">
+        <label htmlFor="area" className="text-blue-900 font-semibold">
           Área en donde desempeña
         </label>
         <select

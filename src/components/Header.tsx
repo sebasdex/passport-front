@@ -31,7 +31,7 @@ function Header() {
             <a href="/employees">Empleados</a>
           </li>
           <li>
-            <a href="/my-data">Mis datos</a>
+            <a href="/users">Usuarios</a>
           </li>
         </ul>
       </nav>

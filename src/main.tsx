@@ -6,6 +6,7 @@ import Layout from "./Layout";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Employees from "./components/Employees";
 import Courses from "./components/Courses";
+import Users from "./components/Users";
 
 const router = createBrowserRouter([
   {
@@ -30,7 +31,11 @@ const router = createBrowserRouter([
       {
         path: "/employees/:id",
         element: <Employees />,
-      }
+      },
+      {
+        path: "/users",
+        element: <Users />,
+      },
     ],
   },
 ]);

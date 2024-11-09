@@ -36,6 +36,10 @@ const router = createBrowserRouter([
         path: "/users",
         element: <Users />,
       },
+      {
+        path: "/users/:id",
+        element: <Users />,
+      },
     ],
   },
 ]);

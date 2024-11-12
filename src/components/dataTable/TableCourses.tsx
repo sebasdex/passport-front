@@ -77,8 +77,9 @@ function TableCourses() {
 
     const deleteCourse = async (id: number): Promise<void> => {
         try {
-            const response = await fetch(`http://localhost:3000/api/deleteCourse/${id}`, {
+            const response = await fetch(`http://localhost:3000/courses/api/deleteCourse/${id}`, {
                 method: "DELETE",
+                credentials: 'include',
             });
             if (response.ok) {
                 showAlert("Curso eliminado correctamente");
@@ -93,7 +94,10 @@ function TableCourses() {
     useEffect(() => {
         try {
             async function fetchData() {
-                const response = await fetch("http://localhost:3000/api/getCourse");
+                const response = await fetch("http://localhost:3000/courses/api/getCourse", {
+                    method: "GET",
+                    credentials: 'include',
+                });
                 const data = await response.json();
                 setRows(data.courses);
             }

@@ -65,7 +65,10 @@ function App() {
 
   useEffect(() => {
     try {
-      const response = fetch("http://localhost:3000/api/getCourse");
+      const response = fetch("http://localhost:3000/courses/api/getCourse", {
+        method: "GET",
+        credentials: "include",
+      });
       response.then((res) => res.json()).then((data) => {
         if (data.courses) {
           setDataCourse(data.courses);

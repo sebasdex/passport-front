@@ -56,14 +56,16 @@ function UsersForm() {
             return;
         }
         try {
-            const response = id ? await fetch(`http://localhost:3000/api/updateUser/${id}`, {
+            const response = id ? await fetch(`http://localhost:3000/users/api/updateUser/${id}`, {
                 method: "PUT",
+                credentials: 'include',
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify(data)
-            }) : await fetch("http://localhost:3000/api/addUser", {
+            }) : await fetch("http://localhost:3000/users/api/addUser", {
                 method: "POST",
+                credentials: 'include',
                 headers: {
                     "Content-Type": "application/json",
                 },
@@ -91,7 +93,10 @@ function UsersForm() {
     }
     useEffect(() => {
         try {
-            const response = fetch("http://localhost:3000/api/getEmployees");
+            const response = fetch("http://localhost:3000/employees/api/getEmployees", {
+                method: "GET",
+                credentials: 'include',
+            });
             response.then((res) => res.json()).then((data) => {
                 setEmployees(data.employees);
             })
@@ -104,7 +109,10 @@ function UsersForm() {
         const fetchData = async () => {
             if (id) {
                 try {
-                    const response = await fetch(`http://localhost:3000/api/getUser/${id}`);
+                    const response = await fetch(`http://localhost:3000/users/api/getUser/${id}`, {
+                        method: "GET",
+                        credentials: 'include',
+                    });
                     if (response.ok) {
                         const data = await response.json()
                         setValue("email", data.user.email);
@@ -142,7 +150,7 @@ function UsersForm() {
                 <label htmlFor="role">Rol</label>
                 <select {...register("role", { required: true })} className="border-2 border-blue-200 p-2 rounded-md">
                     <option value="">-- Selecciona un rol --</option>
-                    <option value="admininstrador">Administrador</option>
+                    <option value="administrador">Administrador</option>
                     <option value="empleado">Empleado</option>
                 </select>
                 {errors.role && <p role="alert" className="text-red-500 -mt-2 font-semibold text-sm">Rol es requerido</p>}

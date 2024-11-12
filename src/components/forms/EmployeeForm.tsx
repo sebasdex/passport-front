@@ -19,7 +19,7 @@ function EmployeeForm() {
   const showAlert = (text: string) => {
     toast.success(text, {
       position: "top-right",
-      autoClose: 3000, // 3 segundos
+      autoClose: 3000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,
@@ -51,7 +51,11 @@ function EmployeeForm() {
       if (id) {
         try {
           const response = await fetch(
-            `http://localhost:3000/api/getEmployee/${id}`
+            `http://localhost:3000/api/employees/getEmployee/${id}`
+            , {
+              method: "GET",
+              credentials: 'include',
+            }
           );
           if (response.ok) {
             const data = await response.json();
@@ -75,15 +79,17 @@ function EmployeeForm() {
   const onSubmit: SubmitHandler<EmployeeFormProps> = async (data) => {
     try {
       const response = id
-        ? await fetch(`http://localhost:3000/api/updateEmployee/${id}`, {
+        ? await fetch(`http://localhost:3000/employees/api/updateEmployee/${id}`, {
           method: "PUT",
+          credentials: 'include',
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(data),
         })
-        : await fetch(`http://localhost:3000/api/addEmployee`, {
+        : await fetch(`http://localhost:3000/employees/api/addEmployee`, {
           method: "POST",
+          credentials: 'include',
           headers: {
             "Content-Type": "application/json",
           },

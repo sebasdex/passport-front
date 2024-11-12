@@ -58,7 +58,10 @@ function CoursesForm() {
     const fetchData = async () => {
       if (id) {
         try {
-          const response = await fetch(`http://localhost:3000/api/getCourse/${id}`);
+          const response = await fetch(`http://localhost:3000/courses/api/getCourse/${id}`, {
+            method: "GET",
+            credentials: 'include',
+          });
           if (response.ok) {
             const data = await response.json()
             setValue("courseName", data.course.courseName);
@@ -84,7 +87,10 @@ function CoursesForm() {
   useEffect(() => {
     try {
       const getEmployees = async () => {
-        const response = await fetch("http://localhost:3000/api/getEmployees");
+        const response = await fetch("http://localhost:3000/employees/api/getEmployees", {
+          method: "GET",
+          credentials: 'include',
+        });
         const data = await response.json();
         setEmployees(data.employees);
       };
@@ -101,12 +107,14 @@ function CoursesForm() {
     try {
       const response = id ? await fetch(`http://localhost:3000/api/updateCourse/${id}`, {
         method: "PUT",
+        credentials: 'include',
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data)
       }) : await fetch(`http://localhost:3000/api/addCourse`, {
         method: "POST",
+        credentials: 'include',
         headers: {
           "Content-Type": "application/json",
         },

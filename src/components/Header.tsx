@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 function Header() {
   const BookIcon = (
     <svg
@@ -17,6 +18,25 @@ function Header() {
     </svg>
   );
 
+  const navigate = useNavigate();
+
+  const handleLogOut = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/auth/api/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+      if (response.ok) {
+        navigate('/login');
+      } else {
+        console.error('Error al cerrar sesión:', response.statusText);
+      }
+    } catch (error) {
+      console.log('Error al cerrar sesión:', error);
+    }
+  };
+
+
   return (
     <header className="bg-blue-900 text-white flex justify-between items-center p-4">
       <nav className="flex items-center justify-between w-full container mx-auto">
@@ -32,6 +52,9 @@ function Header() {
           </li>
           <li>
             <a href="/users">Usuarios</a>
+          </li>
+          <li>
+            <button onClick={handleLogOut}>Salir</button>
           </li>
         </ul>
       </nav>

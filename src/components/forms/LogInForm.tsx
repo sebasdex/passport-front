@@ -33,14 +33,7 @@ function LogInForm() {
                 body: JSON.stringify(data)
             })
             if (userExist.ok) {
-                const user = await userExist.json()
-                console.log(user.user)
-                if (user.user.role === "administrador") {
-                    navigate('/courses')
-                }
-                else {
-                    navigate('/')
-                }
+                navigate('/')
             } else {
                 showError('El usuario no existe')
                 reset()

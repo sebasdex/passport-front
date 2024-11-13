@@ -105,14 +105,14 @@ function CoursesForm() {
     }
     console.log("Datos enviados: ", data);
     try {
-      const response = id ? await fetch(`http://localhost:3000/api/updateCourse/${id}`, {
+      const response = id ? await fetch(`http://localhost:3000/courses/api/updateCourse/${id}`, {
         method: "PUT",
         credentials: 'include',
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data)
-      }) : await fetch(`http://localhost:3000/api/addCourse`, {
+      }) : await fetch(`http://localhost:3000/courses/api/addCourse`, {
         method: "POST",
         credentials: 'include',
         headers: {

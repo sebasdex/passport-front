@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { useRole } from "../helpers/useRole";
 function Header() {
   const BookIcon = (
     <svg
@@ -17,6 +18,8 @@ function Header() {
       />
     </svg>
   );
+
+  const { userData } = useRole();
 
   const navigate = useNavigate();
 
@@ -36,7 +39,6 @@ function Header() {
     }
   };
 
-
   return (
     <header className="bg-blue-900 text-white flex justify-between items-center p-4">
       <nav className="flex items-center justify-between w-full container mx-auto">
@@ -44,15 +46,27 @@ function Header() {
           {BookIcon}PassportCourses
         </Link>
         <ul className="flex gap-4">
-          <li>
-            <a href="/courses">Cursos</a>
-          </li>
-          <li>
-            <a href="/employees">Empleados</a>
-          </li>
-          <li>
-            <a href="/users">Usuarios</a>
-          </li>
+          {userData?.role === "administrador" && (
+            <li>
+              <Link to={"/courses"}>
+                Cursos
+              </Link>
+            </li>
+          )}
+          {userData?.role === "administrador" && (
+            <li>
+              <Link to={"/employees"}>
+                Empleados
+              </Link>
+            </li>
+          )}
+          {userData?.role === "administrador" && (
+            <li>
+              <Link to={"/users"}>
+                Usuarios
+              </Link>
+            </li>
+          )}
           <li>
             <button onClick={handleLogOut}>Salir</button>
           </li>

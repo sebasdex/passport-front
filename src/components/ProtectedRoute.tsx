@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import checkAuth from '../helpers/checkAuth';
 import CircularUnderLoad from './CircularUnderLoad';
+import { useRole } from '../helpers/useRole';
 
 type ProtectedRouteProps = {
     redirectTo: string;
@@ -10,7 +11,7 @@ type ProtectedRouteProps = {
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ redirectTo, allowedRoles }) => {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
-    const [userRole, setUserRole] = useState<string | null>(null);
+    const { userData, setUserData } = useRole();
 
     useEffect(() => {
         const verifyAuth = async () => {
@@ -18,7 +19,9 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ redirectTo, allowedRole
                 const authStatus = await checkAuth();
                 console.log("Estado de autenticación:", authStatus);
                 setIsAuthenticated(authStatus.isAuthenticated);
-                setUserRole(authStatus.user?.role || null);
+                if (authStatus.isAuthenticated && authStatus.user) {
+                    setUserData(authStatus.user);
+                }
             } catch (error) {
                 console.error("Error de autenticación:", error);
                 setIsAuthenticated(false);
@@ -27,10 +30,10 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ redirectTo, allowedRole
         if (isAuthenticated === null) {
             verifyAuth();
         }
-    }, [isAuthenticated]);
+    }, [isAuthenticated, setUserData]);
 
     if (isAuthenticated === null) return <><CircularUnderLoad /></>;
-    if (!allowedRoles.includes(userRole || "")) return <Navigate to={redirectTo} />;
+    if (userData && userData.role && !allowedRoles.includes(userData.role)) return <Navigate to={redirectTo} />;
 
     return isAuthenticated ? <Outlet /> : <Navigate to={redirectTo} />;
 };

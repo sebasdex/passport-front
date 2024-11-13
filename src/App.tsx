@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import InfoCoursesEmployee from "./components/InfoCoursesEmployee";
 import PassportCover from "./components/PassportCover";
+import { useRole } from "./helpers/useRole";
 
 interface Employee {
   id: number;
@@ -62,6 +63,7 @@ function App() {
 
   const [dataCourse, setDataCourse] = useState<Courses[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
+  const { userData } = useRole();
 
   useEffect(() => {
     try {
@@ -79,8 +81,8 @@ function App() {
     }
   }, []);
 
-  const filteredCourses = dataCourse.filter(course => course.studentId === 2);
-  const employeeData = dataCourse.find(course => course.studentId === 2)?.student;
+  const filteredCourses = dataCourse.filter(course => course.studentId === userData?.employeeId);
+  const employeeData = dataCourse.find(course => course.studentId === userData?.employeeId)?.student;
 
   const handleClickNext = () => {
     if (currentPage < filteredCourses.length) {

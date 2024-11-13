@@ -9,6 +9,7 @@ import Users from "./components/Users";
 import LogIn from "./components/LogIn";
 import ProtectedRoute from "./components/ProtectedRoute";
 import App from "./App";
+import { UserProvider } from "./context/AuthContext";
 
 const router = createBrowserRouter([
   {
@@ -16,7 +17,7 @@ const router = createBrowserRouter([
     element: <LogIn />,
   },
   {
-    element: <ProtectedRoute redirectTo="/login" allowedRoles={["empleado"]} />,
+    element: <ProtectedRoute redirectTo="/login" allowedRoles={["empleado", "administrador"]} />,
     children: [
       {
         element: <Layout />,
@@ -69,6 +70,8 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <UserProvider>
+      <RouterProvider router={router} />
+    </UserProvider>
   </StrictMode>
 );

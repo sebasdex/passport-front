@@ -26,6 +26,7 @@ interface Courses {
   student: Employee;
 }
 
+
 function App() {
   const arrowLeft = (
     <svg
@@ -83,6 +84,7 @@ function App() {
 
   const filteredCourses = dataCourse.filter(course => course.studentId === userData?.employeeId);
   const employeeData = dataCourse.find(course => course.studentId === userData?.employeeId)?.student;
+  const totalCourses: number = dataCourse.filter(course => course.studentId === userData?.employeeId).length;
 
   const handleClickNext = () => {
     if (currentPage < filteredCourses.length) {
@@ -97,7 +99,7 @@ function App() {
   };
 
   const currentComponent = currentPage === 0 ? (
-    <PassportCover employee={employeeData} />
+    <PassportCover employee={employeeData} totalCourses={totalCourses} />
   ) : (
     <InfoCoursesEmployee dataCourse={[filteredCourses[currentPage - 1]]} />
   );

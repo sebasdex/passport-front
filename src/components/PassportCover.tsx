@@ -8,9 +8,10 @@ interface Employee {
 
 type PassportCoverProps = {
   employee: Employee | undefined;
+  totalCourses: number;
 };
 
-function PassportCover({ employee }: PassportCoverProps) {
+function PassportCover({ employee, totalCourses }: PassportCoverProps) {
   const WorldIcon = (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -48,6 +49,9 @@ function PassportCover({ employee }: PassportCoverProps) {
           <h2 className="text-2xl lg:text-4xl font-bold mt-4 text-center">{`${employee.name} ${employee.firstName} ${employee.lastName}`}</h2>
           <p className="text-lg lg:text-xl text-blue-200 -mt-2 uppercase">{employee.employeeNumber}</p>
           <p className="text-base lg:text-lg text-blue-200 -mt-3">{employee.area}</p>
+          <p className="text-base lg:text-xl text-blue-200 -mt-2">
+            {`Total de cursos trabajados: ${totalCourses}`}
+          </p>
           <span className="text-lg lg:text-xl text-blue-200 italic mt-6 text-center">
             Embark on your global learning journey
           </span>
@@ -64,8 +68,7 @@ function PassportCover({ employee }: PassportCoverProps) {
         </div>
       )}
       <div className="text-blue-200 text-xs lg:text-sm self-end text-right">
-        <p>Issue Date: 2023-01-01</p>
-        <p>Expiration Date: 2023-01-31</p>
+        <p>Expiration Date: 2025-12-31</p>
       </div>
     </>
   );

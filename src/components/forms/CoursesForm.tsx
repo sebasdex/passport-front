@@ -58,7 +58,7 @@ function CoursesForm() {
     const fetchData = async () => {
       if (id) {
         try {
-          const response = await fetch(`http://localhost:3000/courses/api/getCourse/${id}`, {
+          const response = await fetch(`${import.meta.env.VITE_URL}courses/api/getCourse/${id}`, {
             method: "GET",
             credentials: 'include',
           });
@@ -87,7 +87,7 @@ function CoursesForm() {
   useEffect(() => {
     try {
       const getEmployees = async () => {
-        const response = await fetch("http://localhost:3000/employees/api/getEmployees", {
+        const response = await fetch(`${import.meta.env.VITE_URL}employees/api/getEmployees`, {
           method: "GET",
           credentials: 'include',
         });
@@ -105,14 +105,14 @@ function CoursesForm() {
     }
     console.log("Datos enviados: ", data);
     try {
-      const response = id ? await fetch(`http://localhost:3000/courses/api/updateCourse/${id}`, {
+      const response = id ? await fetch(`${import.meta.env.VITE_URL}courses/api/updateCourse/${id}`, {
         method: "PUT",
         credentials: 'include',
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data)
-      }) : await fetch(`http://localhost:3000/courses/api/addCourse`, {
+      }) : await fetch(`${import.meta.env.VITE_URL}courses/api/addCourse`, {
         method: "POST",
         credentials: 'include',
         headers: {

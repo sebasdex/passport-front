@@ -56,14 +56,14 @@ function UsersForm() {
             return;
         }
         try {
-            const response = id ? await fetch(`http://localhost:3000/users/api/updateUser/${id}`, {
+            const response = id ? await fetch(`${import.meta.env.VITE_URL}users/api/updateUser/${id}`, {
                 method: "PUT",
                 credentials: 'include',
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify(data)
-            }) : await fetch("http://localhost:3000/users/api/addUser", {
+            }) : await fetch(`${import.meta.env.VITE_URL}users/api/addUser`, {
                 method: "POST",
                 credentials: 'include',
                 headers: {
@@ -93,7 +93,7 @@ function UsersForm() {
     }
     useEffect(() => {
         try {
-            const response = fetch("http://localhost:3000/employees/api/getEmployees", {
+            const response = fetch(`${import.meta.env.VITE_URL}employees/api/getEmployees`, {
                 method: "GET",
                 credentials: 'include',
             });
@@ -109,7 +109,7 @@ function UsersForm() {
         const fetchData = async () => {
             if (id) {
                 try {
-                    const response = await fetch(`http://localhost:3000/users/api/getUser/${id}`, {
+                    const response = await fetch(`${import.meta.env.VITE_URL}users/api/getUser/${id}`, {
                         method: "GET",
                         credentials: 'include',
                     });
@@ -202,8 +202,6 @@ function UsersForm() {
                         )}
                     </>
                 )}
-
-
                 <ResponsiveDialog
                     iconButton={id ? "Actualizar" : "Registrar"}
                     handleConfirm={handleSubmit(onSubmit)}

@@ -68,7 +68,7 @@ function App() {
 
   useEffect(() => {
     try {
-      const response = fetch("http://localhost:3000/courses/api/getCourse", {
+      const response = fetch(`${import.meta.env.VITE_URL}courses/api/getCourse`, {
         method: "GET",
         credentials: "include",
       });

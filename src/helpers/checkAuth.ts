@@ -1,6 +1,6 @@
 const checkAuth = async () => {
     try {
-        const response = await fetch('http://localhost:3000/auth/api/checkSession', {
+        const response = await fetch(`${import.meta.env.VITE_URL}auth/api/checkSession`, {
             method: 'GET',
             credentials: 'include',
         });

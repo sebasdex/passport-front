@@ -24,7 +24,7 @@ function LogInForm() {
 
     const onSubmit: SubmitHandler<userProps> = async (data) => {
         try {
-            const userExist = await fetch('http://localhost:3000/auth/api/login', {
+            const userExist = await fetch(`${import.meta.env.VITE_URL}auth/api/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

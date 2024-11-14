@@ -60,7 +60,7 @@ export default function StickyHeadTable() {
   useEffect(() => {
     try {
       async function fetchData() {
-        const response = await fetch("http://localhost:3000/employees/api/getEmployees", {
+        const response = await fetch(`${import.meta.env.VITE_URL}employees/api/getEmployees`, {
           method: "GET",
           credentials: 'include',
         });
@@ -75,7 +75,7 @@ export default function StickyHeadTable() {
 
   const deleteEmployee = async (id: number): Promise<void> => {
     try {
-      const response = await fetch(`http://localhost:3000/employees/api/deleteEmployee/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_URL}employees/api/deleteEmployee/${id}`, {
         method: "DELETE",
         credentials: 'include',
       });

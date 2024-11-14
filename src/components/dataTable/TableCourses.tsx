@@ -77,7 +77,7 @@ function TableCourses() {
 
     const deleteCourse = async (id: number): Promise<void> => {
         try {
-            const response = await fetch(`http://localhost:3000/courses/api/deleteCourse/${id}`, {
+            const response = await fetch(`${import.meta.env.VITE_URL}courses/api/deleteCourse/${id}`, {
                 method: "DELETE",
                 credentials: 'include',
             });
@@ -94,7 +94,7 @@ function TableCourses() {
     useEffect(() => {
         try {
             async function fetchData() {
-                const response = await fetch("http://localhost:3000/courses/api/getCourse", {
+                const response = await fetch(`${import.meta.env.VITE_URL}courses/api/getCourse`, {
                     method: "GET",
                     credentials: 'include',
                 });

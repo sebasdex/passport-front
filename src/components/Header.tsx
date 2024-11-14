@@ -26,7 +26,7 @@ function Header() {
 
   const handleLogOut = async () => {
     try {
-      const response = await fetch('http://localhost:3000/auth/api/logout', {
+      const response = await fetch(`${import.meta.env.VITE_URL}auth/api/logout`, {
         method: 'POST',
         credentials: 'include',
       });

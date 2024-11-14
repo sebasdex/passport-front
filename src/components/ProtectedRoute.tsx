@@ -17,7 +17,6 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ redirectTo, allowedRole
         const verifyAuth = async () => {
             try {
                 const authStatus = await checkAuth();
-                console.log("Estado de autenticación:", authStatus);
                 setIsAuthenticated(authStatus.isAuthenticated);
                 if (authStatus.isAuthenticated && authStatus.user) {
                     setUserData(authStatus.user);

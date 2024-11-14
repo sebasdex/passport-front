@@ -72,7 +72,7 @@ function TableUsers() {
 
     const deleteUser = async (id: number): Promise<void> => {
         try {
-            const response = await fetch(`http://localhost:3000/users/api/deleteUser/${id}`, {
+            const response = await fetch(`${import.meta.env.VITE_URL}users/api/deleteUser/${id}`, {
                 method: "DELETE",
                 credentials: 'include',
             });
@@ -90,7 +90,7 @@ function TableUsers() {
     useEffect(() => {
         try {
             async function fetchData() {
-                const response = await fetch("http://localhost:3000/users/api/getUsers", {
+                const response = await fetch(`${import.meta.env.VITE_URL}users/api/getUsers`, {
                     method: "GET",
                     credentials: 'include',
                 });

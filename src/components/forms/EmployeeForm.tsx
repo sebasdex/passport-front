@@ -51,7 +51,7 @@ function EmployeeForm() {
       if (id) {
         try {
           const response = await fetch(
-            `http://localhost:3000/employees/api/getEmployee/${id}`
+            `${import.meta.env.VITE_URL}employees/api/getEmployee/${id}`
             , {
               method: "GET",
               credentials: 'include',
@@ -79,7 +79,7 @@ function EmployeeForm() {
   const onSubmit: SubmitHandler<EmployeeFormProps> = async (data) => {
     try {
       const response = id
-        ? await fetch(`http://localhost:3000/employees/api/updateEmployee/${id}`, {
+        ? await fetch(`${import.meta.env.VITE_URL}employees/api/updateEmployee/${id}`, {
           method: "PUT",
           credentials: 'include',
           headers: {
@@ -87,7 +87,7 @@ function EmployeeForm() {
           },
           body: JSON.stringify(data),
         })
-        : await fetch(`http://localhost:3000/employees/api/addEmployee`, {
+        : await fetch(`${import.meta.env.VITE_URL}employees/api/addEmployee`, {
           method: "POST",
           credentials: 'include',
           headers: {

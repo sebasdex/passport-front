@@ -28,7 +28,7 @@ export default function ResponsiveDialog({
   className
 }: DialogAlertProps) {
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
+  const fullScreen = useMediaQuery(theme.breakpoints.down("xs"));
   const [open, setOpen] = React.useState(false);
   const handleClickOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -54,9 +54,10 @@ export default function ResponsiveDialog({
         open={open}
         onClose={handleClose}
         aria-labelledby="responsive-dialog-title"
+        maxWidth="xs"
       >
         <DialogTitle id="responsive-dialog-title">{dialogQuestion}</DialogTitle>
-        <DialogContent>
+        <DialogContent sx={{ padding: "0 2rem" }}>
           <DialogContentText>{dialogText}</DialogContentText>
         </DialogContent>
         <DialogActions>

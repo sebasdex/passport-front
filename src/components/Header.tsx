@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useRole } from "../helpers/useRole";
+import FadeMenu from "./FadeMenu";
 function Header() {
   const BookIcon = (
     <svg
@@ -45,7 +46,8 @@ function Header() {
         <Link to={"/"} className="text-2xl font-bold flex items-center gap-2">
           {BookIcon}PassportCourses
         </Link>
-        <ul className="flex gap-4">
+        <FadeMenu handleOut={handleLogOut} userRoleCheck={userData?.role ?? ''} />
+        <ul className="gap-4 hidden lg:flex">
           {userData?.role === "administrador" && (
             <li>
               <Link to={"/courses"}>

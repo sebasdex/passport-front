@@ -51,7 +51,7 @@ function EmployeeForm() {
       if (id) {
         try {
           const response = await fetch(
-            `http://localhost:3000/api/employees/getEmployee/${id}`
+            `http://localhost:3000/employees/api/getEmployee/${id}`
             , {
               method: "GET",
               credentials: 'include',

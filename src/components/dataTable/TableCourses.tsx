@@ -107,7 +107,8 @@ function TableCourses() {
         }
     }, [rows]);
     return (
-        <Paper sx={{ width: "100%", overflow: "hidden", marginTop: "10rem" }}>
+
+        <Paper sx={{ minWidth: "200px", width: "100%", maxWidth: "90vw", overflow: "hidden", marginTop: "4rem", }}>
             <TableContainer sx={{ maxHeight: 500 }}>
                 <Table stickyHeader aria-label="sticky table">
                     <TableHead>
@@ -160,7 +161,7 @@ function TableCourses() {
                                                 {row.startDate ? new Date(row.startDate).toLocaleDateString('es-ES', { month: 'short', day: 'numeric', year: 'numeric' }) : "No iniciado"}
                                             </TableCell>
                                             <TableCell align="left" width={200}>
-                                                <p className={`w-fit rounded-sm ${row.endDate === null && "bg-red-500 text-white p-1 text-xs font-semibold"}`}>{row.endDate ? new Date(row.endDate).toLocaleDateString('es-ES', { month: 'short', day: 'numeric', year: 'numeric' }) : "No finalizado"}</p>
+                                                <p className={`w-fit rounded-sm ${row.endDate === null && "bg-red-500 text-white p-1 text-xs font-semibold"}`}>{row.endDate ? new Date(row.endDate).toLocaleDateString('es-ES', { month: 'short', day: 'numeric', year: 'numeric' }) : "Pendiente"}</p>
                                             </TableCell>
                                             <TableCell align="left" width={200}>
                                                 {row.instructor}

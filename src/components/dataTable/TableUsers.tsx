@@ -103,7 +103,7 @@ function TableUsers() {
         }
     }, [rows]);
     return (
-        <Paper sx={{ width: "100%", overflow: "hidden", marginTop: "8rem" }}>
+        <Paper sx={{ minWidth: "250px", width: "100%", maxWidth: "90vw", overflow: "hidden", marginTop: "4rem" }}>
             <TableContainer sx={{ maxHeight: 500 }}>
                 <Table stickyHeader aria-label="sticky table">
                     <TableHead>

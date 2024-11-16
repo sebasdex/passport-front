@@ -131,10 +131,10 @@ function TableUsers() {
                                             <TableCell align="left" width={200}>
                                                 {row.email}
                                             </TableCell>
-                                            <TableCell align="left" width={200}>
+                                            <TableCell align="left" width={200} className="capitalize">
                                                 {row.role}
                                             </TableCell>
-                                            <TableCell align="left" width={200} className="text-center">
+                                            <TableCell align="left" width={200} className="text-center capitalize">
                                                 {row.employee.name} {row.employee.firstName} {row.employee.lastName}
                                             </TableCell>
 

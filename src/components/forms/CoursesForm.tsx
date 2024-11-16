@@ -103,7 +103,6 @@ function CoursesForm() {
     if (data.studentId) {
       data.studentId = Number(data.studentId);
     }
-    console.log("Datos enviados: ", data);
     try {
       const response = id ? await fetch(`${import.meta.env.VITE_URL}courses/api/updateCourse/${id}`, {
         method: "PUT",
@@ -141,7 +140,7 @@ function CoursesForm() {
       </button>
       <form className="flex flex-col gap-4">
         <label htmlFor="name" className="text-blue-900 font-semibold">
-          Nombre del curso
+          Nombre del curso <span className="text-red-500">*</span>
         </label>
         <input
           type="text"
@@ -156,7 +155,7 @@ function CoursesForm() {
           </p>
         )}
         <label htmlFor="description" className="text-blue-900 font-semibold">
-          Descripción del curso
+          Descripción del curso <span className="text-red-500">*</span>
         </label>
         <textarea
           placeholder="Ej. Curso de programación para principiantes"
@@ -171,7 +170,7 @@ function CoursesForm() {
           </p>
         )}
         <label htmlFor="startDate" className="text-blue-900 font-semibold">
-          Fecha de inicio
+          Fecha de inicio <span className="text-red-500">*</span>
         </label>
         <input
           type="date"
@@ -195,7 +194,7 @@ function CoursesForm() {
           {...register("endDate")}
         />
         <label htmlFor="instructor" className="text-blue-900 font-semibold">
-          Instructor del curso
+          Instructor del curso <span className="text-red-500">*</span>
         </label>
         <select
           className="w-full border-2 border-blue-200 p-2 rounded-md"
@@ -214,7 +213,7 @@ function CoursesForm() {
           </p>
         )}
         <label htmlFor="studentId" className="text-blue-900 font-semibold">
-          ¿Quién toma el curso?
+          ¿Quién toma el curso? <span className="text-red-500">*</span>
         </label>
         <select
           className="w-full border-2 border-blue-200 p-2 rounded-md"
@@ -242,7 +241,7 @@ function CoursesForm() {
           />
         </div>
         <label htmlFor="place" className="text-blue-900 font-semibold">
-          Lugar donde se llevará a cabo el curso
+          Lugar donde será el curso <span className="text-red-500">*</span>
         </label>
         <select
           className="w-full border-2 border-blue-200 p-2 rounded-md"

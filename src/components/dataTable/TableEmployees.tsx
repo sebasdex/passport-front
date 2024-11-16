@@ -96,19 +96,19 @@ export default function StickyHeadTable() {
           <TableHead>
             <TableRow>
               <TableCell align="left" width={200}>
-                Employee Number
+                N° de empleado
               </TableCell>
               <TableCell align="left" width={200}>
-                Name
+                Nombre
               </TableCell>
               <TableCell align="left" width={200}>
-                First Name
+                Primer apellido
               </TableCell>
               <TableCell align="left" width={200}>
-                Last Name
+                Segundo apellido
               </TableCell>
               <TableCell align="left" width={200}>
-                Email
+                Correo
               </TableCell>
               <TableCell align="left" width={200}>
                 Area

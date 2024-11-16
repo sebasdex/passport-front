@@ -67,6 +67,14 @@ function App() {
   const { userData } = useRole();
 
   useEffect(() => {
+    if (userData && userData.role) {
+      console.log('El role es', userData.role);
+    } else {
+      console.log('No hay role');
+    }
+  }, [userData]);
+
+  useEffect(() => {
     try {
       const response = fetch(`${import.meta.env.VITE_URL}courses/api/getCourse`, {
         method: "GET",

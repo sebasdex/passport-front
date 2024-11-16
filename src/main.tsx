@@ -10,6 +10,7 @@ import LogIn from "./components/LogIn";
 import ProtectedRoute from "./components/ProtectedRoute";
 import App from "./App";
 import { UserProvider } from "./context/AuthContext";
+import Error from "./components/Error";
 
 const router = createBrowserRouter([
   {
@@ -35,6 +36,7 @@ const router = createBrowserRouter([
     children: [
       {
         element: <Layout />,
+        errorElement: <Error />,
         children: [
           {
             path: "/courses",

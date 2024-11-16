@@ -127,7 +127,7 @@ function EmployeeForm() {
       </button>
       <form className="flex flex-col gap-4">
         <label htmlFor="employeeNumber" className="text-blue-900 font-semibold">
-          N° de empleado
+          N° de empleado <span className="text-red-500">*</span>
         </label>
         <input
           className="w-full border-2 border-blue-200 p-2 rounded-md"
@@ -143,7 +143,7 @@ function EmployeeForm() {
         )}
 
         <label htmlFor="name" className="text-blue-900 font-semibold">
-          Nombre del empleado
+          Nombre <span className="text-red-500">*</span>
         </label>
         <input
           type="text"
@@ -158,7 +158,7 @@ function EmployeeForm() {
           </p>
         )}
         <label htmlFor="firstName" className="text-blue-900 font-semibold">
-          Primer Apellido
+          Primer Apellido <span className="text-red-500">*</span>
         </label>
         <input
           type="text"
@@ -173,7 +173,7 @@ function EmployeeForm() {
           </p>
         )}
         <label htmlFor="lastName" className="text-blue-900 font-semibold">
-          Segundo Apellido
+          Segundo Apellido <span className="text-red-500">*</span>
         </label>
         <input
           type="text"
@@ -189,7 +189,7 @@ function EmployeeForm() {
         )}
 
         <label htmlFor="area" className="text-blue-900 font-semibold">
-          Área en donde desempeña
+          Área en donde desempeña <span className="text-red-500">*</span>
         </label>
         <select
           {...register("area", { required: true })}
@@ -209,7 +209,7 @@ function EmployeeForm() {
         )}
 
         <label htmlFor="email" className="text-blue-900 font-semibold">
-          Email
+          Email <span className="text-red-500">*</span>
         </label>
         <input
           type="email"

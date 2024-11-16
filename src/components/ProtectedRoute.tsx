@@ -17,24 +17,30 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ redirectTo, allowedRole
         const verifyAuth = async () => {
             try {
                 const authStatus = await checkAuth();
-                setIsAuthenticated(authStatus.isAuthenticated);
+                console.log('authStatus', authStatus);
                 if (authStatus.isAuthenticated && authStatus.user) {
+                    setIsAuthenticated(true);
                     setUserData(authStatus.user);
                 }
+                else {
+                    setIsAuthenticated(false);
+                }
             } catch (error) {
-                console.error("Error de autenticación:", error);
+                console.log("Error al verificar autenticación", error);
                 setIsAuthenticated(false);
             }
         };
-        if (isAuthenticated === null) {
-            verifyAuth();
-        }
-    }, [isAuthenticated, setUserData]);
+        verifyAuth();
+    }, [setUserData]);
 
     if (isAuthenticated === null) return <><CircularUnderLoad /></>;
-    if (userData && userData.role && !allowedRoles.includes(userData.role)) return <Navigate to={redirectTo} />;
+    if (isAuthenticated === false) return <Navigate to={redirectTo} />;
 
-    return isAuthenticated ? <Outlet /> : <Navigate to={redirectTo} />;
+    if (userData && userData.role && !allowedRoles.includes(userData.role)) {
+        return <Navigate to={redirectTo} />;
+    }
+
+    return <Outlet />;
 };
 
 export default ProtectedRoute;

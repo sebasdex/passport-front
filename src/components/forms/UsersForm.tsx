@@ -144,17 +144,17 @@ function UsersForm() {
                 Nuevo registro
             </button>
             <form className="flex flex-col gap-4">
-                <label htmlFor="email">Email</label>
+                <label htmlFor="email">Email <span className="text-red-500">*</span></label>
                 <input type="email" {...register("email", { required: true })} placeholder="ej. ivan@gmail.com" className="border-2 border-blue-200 p-2 rounded-md" />
                 {errors.email && <p role="alert" className="text-red-500 -mt-2 font-semibold text-sm">Email es requerido</p>}
-                <label htmlFor="role">Rol</label>
+                <label htmlFor="role">Rol <span className="text-red-500">*</span></label>
                 <select {...register("role", { required: true })} className="border-2 border-blue-200 p-2 rounded-md">
                     <option value="">-- Selecciona un rol --</option>
                     <option value="administrador">Administrador</option>
                     <option value="empleado">Empleado</option>
                 </select>
                 {errors.role && <p role="alert" className="text-red-500 -mt-2 font-semibold text-sm">Rol es requerido</p>}
-                <label htmlFor="employee">Empleado</label>
+                <label htmlFor="employee">Empleado <span className="text-red-500">*</span></label>
                 <select {...register("employeeId", { required: true })} className="border-2 border-blue-200 p-2 rounded-md capitalize">
                     <option value="">-- Selecciona un empleado --</option>
                     {employees.map((employee) => (
@@ -175,7 +175,7 @@ function UsersForm() {
                 </div>}
                 {(!id || checkUpdate) && (
                     <>
-                        <label htmlFor="password">Contraseña</label>
+                        <label htmlFor="password">Contraseña <span className="text-red-500">*</span></label>
                         <input
                             type="password"
                             {...register("password", { required: true })}
@@ -188,7 +188,7 @@ function UsersForm() {
                             </p>
                         )}
 
-                        <label htmlFor="confirmPassword">Confirmar contraseña</label>
+                        <label htmlFor="confirmPassword">Confirmar contraseña <span className="text-red-500">*</span></label>
                         <input
                             type="password"
                             {...register("confirmPassword", { required: true })}

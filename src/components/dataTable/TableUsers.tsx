@@ -122,7 +122,7 @@ function TableUsers() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {rows.length > 0 ? (
+                        {rows?.length > 0 ? (
                             rows
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((row) => {

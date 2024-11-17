@@ -221,7 +221,7 @@ function CoursesForm() {
           aria-invalid={errors.studentId ? "true" : "false"}
         >
           <option value="">-- Selecciona una opción --</option>
-          {employees.map((employee) => (
+          {employees?.map((employee) => (
             <option key={employee.id} value={employee.id}>
               {`${employee.name} ${employee.firstName} ${employee.lastName}`}
             </option>

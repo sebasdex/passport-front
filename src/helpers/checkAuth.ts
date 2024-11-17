@@ -4,15 +4,11 @@ const checkAuth = async () : Promise<{ isAuthenticated: boolean, user?: { role: 
             method: 'GET',
             credentials: 'include', 
         });
-        console.log('response', response);
         if (response.status === 401) {
-            console.log('No se autenticaron error 401');
             return { isAuthenticated: false };
         }
         const data = await response.json();
-        console.log('data', data);
         if(!data.isAuthenticated || !data.user) {
-            console.log('No se autenticaron error 401' + data.user);
             return { isAuthenticated: false };
         }
         return { isAuthenticated: true, user: data.user };

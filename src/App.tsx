@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import InfoCoursesEmployee from "./components/InfoCoursesEmployee";
 import PassportCover from "./components/PassportCover";
 import { useRole } from "./helpers/useRole";
+import { useNavigate } from "react-router-dom";
 
 interface Employee {
   id: number;
@@ -64,15 +65,28 @@ function App() {
 
   const [dataCourse, setDataCourse] = useState<Courses[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
-  const { userData } = useRole();
+  const { userData, setUserData } = useRole();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (userData && userData.role) {
-      console.log('El role es', userData.role);
-    } else {
-      console.log('No hay role');
-    }
-  }, [userData]);
+    const verifyAuth = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_URL}`, {
+          method: "GET",
+          credentials: "include",
+        });
+        if (response.status === 401) {
+          setUserData({ role: null, employeeId: null });
+          navigate('/login');
+          return;
+        }
+      }
+      catch (error) {
+        console.log("Error al verificar autenticación", error);
+      }
+    };
+    verifyAuth();
+  }, [setUserData, navigate]);
 
   useEffect(() => {
     try {

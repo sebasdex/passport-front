@@ -142,38 +142,38 @@ function TableCourses() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {rows.length > 0 ? (
+                        {rows?.length > 0 ? (
                             rows
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((row) => {
                                     return (
-                                        <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
+                                        <TableRow hover role="checkbox" tabIndex={-1} key={row?.id}>
                                             <TableCell align="left" width={200}>
-                                                {row.courseName}
+                                                {row?.courseName}
                                             </TableCell>
                                             <TableCell align="left" width={200}>
-                                                {row.description}
+                                                {row?.description}
                                             </TableCell>
                                             <TableCell align="left" width={200} className="text-center">
-                                                {row.place}
+                                                {row?.place}
                                             </TableCell>
                                             <TableCell align="left" width={200}>
-                                                {row.startDate ? new Date(row.startDate).toLocaleDateString('es-ES', { month: 'short', day: 'numeric', year: 'numeric' }) : "No iniciado"}
+                                                {row?.startDate ? new Date(row?.startDate).toLocaleDateString('es-ES', { month: 'short', day: 'numeric', year: 'numeric' }) : "No iniciado"}
                                             </TableCell>
                                             <TableCell align="left" width={200}>
-                                                <p className={`w-fit rounded-sm ${row.endDate === null && "bg-red-500 text-white p-1 text-xs font-semibold"}`}>{row.endDate ? new Date(row.endDate).toLocaleDateString('es-ES', { month: 'short', day: 'numeric', year: 'numeric' }) : "Pendiente"}</p>
+                                                <p className={`w-fit rounded-sm ${row?.endDate === null && "bg-red-500 text-white p-1 text-xs font-semibold"}`}>{row?.endDate ? new Date(row.endDate).toLocaleDateString('es-ES', { month: 'short', day: 'numeric', year: 'numeric' }) : "Pendiente"}</p>
                                             </TableCell>
                                             <TableCell align="left" width={200}>
-                                                {row.instructor}
+                                                {row?.instructor}
                                             </TableCell>
                                             <TableCell align="left" width={200}>
-                                                {`${row.student.name} ${row.student.firstName} ${row.student.lastName} `}
+                                                {`${row?.student.name} ${row?.student.firstName} ${row?.student.lastName} `}
                                             </TableCell>
                                             <TableCell align="left" width={200}>
-                                                <p className={`p-1 text-xs font-semibold text-white w-fit rounded-sm ${row.approved ? "bg-green-500" : "bg-red-500"}`}>{row.approved ? "Aprobado" : "Denegado"}</p>
+                                                <p className={`p-1 text-xs font-semibold text-white w-fit rounded-sm ${row?.approved ? "bg-green-500" : "bg-red-500"}`}>{row?.approved ? "Aprobado" : "Denegado"}</p>
                                             </TableCell>
                                             <TableCell className="flex justify-end">
-                                                <button onClick={() => handleClick(row.id)}>
+                                                <button onClick={() => handleClick(row?.id)}>
                                                     {<EditIcon />}
                                                 </button>
                                             </TableCell>
@@ -184,7 +184,7 @@ function TableCourses() {
                                                     dialogText="Esta acción no se puede deshacer y eliminará permanentemente el curso."
                                                     buttonText="Eliminar"
                                                     buttonColorText="error"
-                                                    handleConfirm={() => deleteCourse(row.id)}
+                                                    handleConfirm={() => deleteCourse(row?.id)}
                                                 />
                                             </TableCell>
                                         </TableRow>

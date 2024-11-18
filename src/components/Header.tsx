@@ -48,21 +48,21 @@ function Header() {
         </Link>
         <FadeMenu handleOut={handleLogOut} userRoleCheck={userData?.role ?? ''} />
         <ul className="gap-4 hidden lg:flex">
-          {userData?.role === "administrador" && (
+          {userData?.role === import.meta.env.VITE_ROLE_ONE && (
             <li>
               <Link to={"/courses"}>
                 Cursos
               </Link>
             </li>
           )}
-          {userData?.role === "administrador" && (
+          {userData?.role === import.meta.env.VITE_ROLE_ONE && (
             <li>
               <Link to={"/employees"}>
                 Empleados
               </Link>
             </li>
           )}
-          {userData?.role === "administrador" && (
+          {userData?.role === import.meta.env.VITE_ROLE_ONE && (
             <li>
               <Link to={"/users"}>
                 Usuarios

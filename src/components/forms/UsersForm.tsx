@@ -150,8 +150,8 @@ function UsersForm() {
                 <label htmlFor="role">Rol <span className="text-red-500">*</span></label>
                 <select {...register("role", { required: true })} className="border-2 border-blue-200 p-2 rounded-md">
                     <option value="">-- Selecciona un rol --</option>
-                    <option value="administrador">Administrador</option>
-                    <option value="empleado">Empleado</option>
+                    <option value={import.meta.env.VITE_ROLE_ONE}>{import.meta.env.VITE_ROLE_ONE}</option>
+                    <option value={import.meta.env.VITE_ROLE_TWO}>{import.meta.env.VITE_ROLE_TWO}</option>
                 </select>
                 {errors.role && <p role="alert" className="text-red-500 -mt-2 font-semibold text-sm">Rol es requerido</p>}
                 <label htmlFor="employee">Empleado <span className="text-red-500">*</span></label>

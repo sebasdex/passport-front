@@ -20,10 +20,10 @@ export default function FadeMenu({ handleOut, userRoleCheck }: FadeMenuProps) {
 
 
     const links = [
-        { name: 'Cursos', path: '/courses', role: ['administrador'] },
-        { name: 'Empleados', path: '/employees', role: ['administrador'] },
-        { name: 'Usuarios', path: '/users', role: ['administrador'] },
-        { name: 'Salir', path: '', role: ['administrador', 'empleado'], handleOutClick: handleOut },
+        { name: 'Cursos', path: '/courses', role: [import.meta.env.VITE_ROLE_ONE] },
+        { name: 'Empleados', path: '/employees', role: [import.meta.env.VITE_ROLE_ONE] },
+        { name: 'Usuarios', path: '/users', role: [import.meta.env.VITE_ROLE_ONE] },
+        { name: 'Salir', path: '', role: [import.meta.env.VITE_ROLE_ONE, import.meta.env.VITE_ROLE_TWO], handleOutClick: handleOut },
     ];
 
     const handleClose = () => {

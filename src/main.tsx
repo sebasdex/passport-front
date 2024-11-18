@@ -18,7 +18,7 @@ const router = createBrowserRouter([
     element: <LogIn />,
   },
   {
-    element: <ProtectedRoute redirectTo="/login" allowedRoles={["empleado", "administrador"]} />,
+    element: <ProtectedRoute redirectTo="/login" allowedRoles={[import.meta.env.VITE_ROLE_ONE, import.meta.env.VITE_ROLE_TWO]} />,
     children: [
       {
         element: <Layout />,
@@ -32,7 +32,7 @@ const router = createBrowserRouter([
     ],
   },
   {
-    element: <ProtectedRoute redirectTo="/login" allowedRoles={["administrador"]} />,
+    element: <ProtectedRoute redirectTo="/login" allowedRoles={[import.meta.env.VITE_ROLE_ONE]} />,
     children: [
       {
         element: <Layout />,

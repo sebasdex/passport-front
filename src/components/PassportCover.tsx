@@ -64,7 +64,7 @@ function PassportCover({ employee, totalCourses }: PassportCoverProps) {
             className="rounded-full h-40 w-40 object-cover object-bottom border-4 border-yellow-400"
           />
           <h2 className="text-2xl lg:text-4xl font-bold mt-4">No tienes datos registrados</h2>
-          <p className="text-base lg:text-xl text-blue-200 -mt-2">Si tu información no se muestra, espera a que el administrador agregue tus cursos</p>
+          <p className="text-base lg:text-xl text-blue-200 -mt-2">Si tu información no se muestra, espera a que se agreguen tus cursos</p>
         </div>
       )}
       <div className="text-blue-200 text-xs lg:text-sm self-end text-right">

@@ -32,7 +32,7 @@ function TableUsers() {
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [rows, setRows] = useState<User[]>([]);
     const navigate = useNavigate();
-    const handleChangePage = (event: unknown, newPage: number) => {
+    const handleChangePage = (_event: unknown, newPage: number) => {
         setPage(newPage);
     };
 

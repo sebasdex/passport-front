@@ -1,30 +1,29 @@
-# Frontend - Gestión de Cursos (Passport)
+# Gestión de Cursos (Passport)
 
-Este es el frontend para el sistema de **gestión de cursos**, diseñado como la interfaz de cliente para la API correspondiente, cuyo repositorio se puede encontrar en el siguiente enlace: [Repositorio API](enlace-del-repositorio-api).
-
-El nombre del proyecto, **"Passport"**, hace referencia a la inspiración en el diseño de pasaporte, lo que le otorga una interfaz moderna y visualmente atractiva. El objetivo principal de este proyecto es facilitar la gestión de cursos, usuarios y empleados, al tiempo que refuerza mis habilidades en **TypeScript** y conceptos clave como el manejo de sesiones y la implementación de restricciones de acceso. Estas características son esenciales para construir aplicaciones seguras, escalables y fáciles de usar.
+Este proyecto es el frontend o la parte del cliente para el API de gestión de cursos, cuyo repositorio correspondiente se encuentra en el siguiente enlace: [Repositorio API](https://github.com/sebasdex/backend-passport).  
+  
+Este proyecto lleva el nombre de "Passport" debido a su interfaz inspirada en un diseño estilo pasaporte, lo que ofrece una experiencia visual amigable y moderna.  
+El desarrollo de esta aplicación tiene como objetivo no solo gestionar eficientemente los cursos, usuarios y empleados, sino también reforzar mis habilidades en TypeScript y profundizar en conceptos clave como el manejo de sesiones y la implementación de restricciones de acceso, esenciales para aplicaciones seguras y escalables.
 
 ## Tecnologías y dependencias
 
-- **TypeScript**: Lenguaje basado en JavaScript que añade tipado estático.
-- **Vite**: Herramienta moderna para el desarrollo frontend con un rendimiento optimizado.
-- **Tailwind CSS**: Framework para diseño de interfaces, centrado en la utilidad y personalización.
-- **Material UI**: Biblioteca de componentes React para crear interfaces interactivas y accesibles.
-- **React**: Biblioteca para construir interfaces de usuario dinámicas.
-- **React Router**: Gestión de rutas en la aplicación para navegación entre páginas.
-- **React Hook Form**: Librería para la gestión y validación de formularios.
-- **React Toastify**: Librería para mostrar notificaciones emergentes de éxito y error.
-- **@mui/icons-material**: Conjunto de iconos listos para usar con Material UI.
-- **@emotion/react y @emotion/styled**: Utilizados para estilizar componentes de manera dinámica dentro de React.
+- **TypeScript**
+- **Vite**
+- **Tailwind CSS**
+- **Material UI**
+- **React**
+- **React Router**
+- **React Hook Form**
+- **React Toastify**
 
 ## Instalación
 
 1. Clona el repositorio en tu máquina local:
    ```bash
-   git clone https://github.com/tu-usuario/tu-repo.git
+   git clone https://github.com/sebasdex/passport-front.git
 2. Accede a la carpeta del proyecto:
    ```bash
-   cd carpeta-de-proyecto
+   cd passport-front
 3. Instala las dependencias utilizando pnpm:
    ```bash
    pnpm install

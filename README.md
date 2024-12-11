@@ -1,9 +1,11 @@
-# Gestión de Cursos (Passport)
-
-Este proyecto es el frontend o la parte del cliente para el API de gestión de cursos, cuyo repositorio correspondiente se encuentra en el siguiente enlace: [Repositorio API](https://github.com/sebasdex/backend-passport).  
+#  PassportApp (Gestión de Cursos)
   
-Este proyecto lleva el nombre de "Passport" debido a su interfaz inspirada en un diseño estilo pasaporte, lo que ofrece una experiencia visual amigable y moderna.  
-El desarrollo de esta aplicación tiene como objetivo no solo gestionar eficientemente los cursos, usuarios y empleados, sino también reforzar mis habilidades en TypeScript y profundizar en conceptos clave como el manejo de sesiones y la implementación de restricciones de acceso, esenciales para aplicaciones seguras y escalables.
+*Este proyecto es parte de una práctica personal para mejorar mis habilidades de desarrollo web.*   
+  
+Es el frontend o la parte del cliente para el API de gestión de cursos, cuyo repositorio correspondiente se encuentra en el siguiente enlace: [Repositorio API](https://github.com/sebasdex/backend-passport).
+
+El proyecto lleva el nombre "PassportApp", inspirado en su interfaz con diseño estilo pasaporte, que ofrece una experiencia visual amigable, moderna y atractiva.  
+El desarrollo de esta aplicación tiene como propósito principal gestionar de manera eficiente los cursos, usuarios y empleados, mientras refuerzo mis conocimientos en TypeScript y profundizo en conceptos clave como el manejo de sesiones y la implementación de restricciones de acceso. Estas características son esenciales para construir aplicaciones seguras, escalables y de alto rendimiento.
 
 ## Tecnologías y dependencias
 
@@ -41,23 +43,60 @@ El desarrollo de esta aplicación tiene como objetivo no solo gestionar eficient
 - **Notificaciones de éxito:**
   Gracias a Toastify, los usuarios reciben notificaciones visuales que indican el éxito o el error de sus acciones.  
 - **Interfaz moderna:**
-  Con MaterialUI se personaliza los botones y los Tables para mostrar la información de manera agradable.
+  Con MaterialUI se personaliza los botones y los dataTables para mostrar la información de manera agradable.
 
 ## Estructura del proyecto
 
 ```bash
+├── public/              
 ├── src/
-│   ├── components/      # Componentes reutilizables
-│   ├── context/         # Contextos globales (como AuthContext)
-│   ├── pages/           # Páginas (ej. Usuarios, Empleados, Cursos)
-│   ├── routes/          # Definición de rutas
-│   ├── services/        # Llamadas a la API
-│   ├── styles/          # Archivos de Tailwind CSS
-│   └── utils/           # Funciones utilitarias
-├── public/              # Archivos estáticos
-├── tailwind.config.js   # Configuración de Tailwind CSS
-├── tsconfig.json        # Configuración de TypeScript
-└── vite.config.ts       # Configuración de Vite
+│   ├── assets/         
+│   │   └── react.svg
+│   ├── components/      
+│   │   ├── dataTable/
+│   │   │   ├── TableCourses.tsx
+│   │   │   ├── TableEmployees.tsx
+│   │   │   └── TableUsers.tsx
+│   │   ├── forms/
+│   │   │   ├── CoursesForm.tsx
+│   │   │   ├── EmployeeForm.tsx
+│   │   │   ├── LogInForm.tsx
+│   │   │   └── UsersForm.tsx
+│   │   ├── CircularUnderLoad.tsx
+│   │   ├── Courses.tsx
+│   │   ├── DialogAlert.tsx
+│   │   ├── Employees.tsx
+│   │   ├── Error.tsx
+│   │   ├── FadeMenu.tsx
+│   │   ├── Footer.tsx
+│   │   ├── Header.tsx
+│   │   ├── InfoCoursesEmployee.tsx
+│   │   ├── LogIn.tsx
+│   │   ├── PassportCover.tsx
+│   │   ├── ProtectedRoute.tsx
+│   │   └── Users.tsx
+│   ├── context/         
+│   │   ├── AuthContext.tsx
+│   │   └── UserContext.tsx
+│   ├── helpers/        
+│   ├── App.tsx           
+│   ├── Layout.tsx       
+│   ├── index.css        
+│   ├── main.tsx         
+│   └── vite-env.d.ts    
+├── .gitignore           
+├── README.md            
+├── eslint.config.js    
+├── index.html           
+├── package.json        
+├── pnpm-lock.yaml       
+├── postcss.config.js    
+├── tailwind.config.js   
+├── tsconfig.json        
+├── tsconfig.app.json    
+├── tsconfig.node.json   
+└── vite.config.ts       
+
 ```
 
 ## Funcionalidades

@@ -1,50 +1,73 @@
-# React + TypeScript + Vite
+# Frontend - Gestión de Cursos (Passport)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Este es el frontend para el sistema de **gestión de cursos**, diseñado como la interfaz de cliente para la API correspondiente, cuyo repositorio se puede encontrar en el siguiente enlace: [Repositorio API](enlace-del-repositorio-api).
 
-Currently, two official plugins are available:
+El nombre del proyecto, **"Passport"**, hace referencia a la inspiración en el diseño de pasaporte, lo que le otorga una interfaz moderna y visualmente atractiva. El objetivo principal de este proyecto es facilitar la gestión de cursos, usuarios y empleados, al tiempo que refuerza mis habilidades en **TypeScript** y conceptos clave como el manejo de sesiones y la implementación de restricciones de acceso. Estas características son esenciales para construir aplicaciones seguras, escalables y fáciles de usar.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Tecnologías y dependencias
 
-## Expanding the ESLint configuration
+- **TypeScript**: Lenguaje basado en JavaScript que añade tipado estático.
+- **Vite**: Herramienta moderna para el desarrollo frontend con un rendimiento optimizado.
+- **Tailwind CSS**: Framework para diseño de interfaces, centrado en la utilidad y personalización.
+- **Material UI**: Biblioteca de componentes React para crear interfaces interactivas y accesibles.
+- **React**: Biblioteca para construir interfaces de usuario dinámicas.
+- **React Router**: Gestión de rutas en la aplicación para navegación entre páginas.
+- **React Hook Form**: Librería para la gestión y validación de formularios.
+- **React Toastify**: Librería para mostrar notificaciones emergentes de éxito y error.
+- **@mui/icons-material**: Conjunto de iconos listos para usar con Material UI.
+- **@emotion/react y @emotion/styled**: Utilizados para estilizar componentes de manera dinámica dentro de React.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Instalación
 
-- Configure the top-level `parserOptions` property like this:
+1. Clona el repositorio en tu máquina local:
+   ```bash
+   git clone https://github.com/tu-usuario/tu-repo.git
+2. Accede a la carpeta del proyecto:
+   ```bash
+   cd carpeta-de-proyecto
+3. Instala las dependencias utilizando pnpm:
+   ```bash
+   pnpm install
+4. Inicia el servidor de desarrollo:
+   ```bash
+   pnpm run dev
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## Características
+- **Autenticación y control de acceso:**
+    Se utiliza un AuthContext para manejar el estado global de la sesión de los usuarios, garantizando que solo los usuarios autenticados puedan acceder a las páginas protegidas.  
+- **Rutas protegidas:**
+  Se implementan rutas privadas que aseguran que solo los usuarios autorizados puedan acceder a ciertas áreas del sistema, como la gestión de usuarios y empleados.    
+- **Gestión de formularios:**
+  Los formularios de creación y edición de usuarios, empleados y cursos están validados de manera eficiente utilizando React Hook Form.  
+- **Notificaciones de éxito:**
+  Gracias a Toastify, los usuarios reciben notificaciones visuales que indican el éxito o el error de sus acciones.  
+- **Interfaz moderna:**
+  Con MaterialUI se personaliza los botones y los Tables para mostrar la información de manera agradable.
+
+## Estructura del proyecto
+
+```bash
+├── src/
+│   ├── components/      # Componentes reutilizables
+│   ├── context/         # Contextos globales (como AuthContext)
+│   ├── pages/           # Páginas (ej. Usuarios, Empleados, Cursos)
+│   ├── routes/          # Definición de rutas
+│   ├── services/        # Llamadas a la API
+│   ├── styles/          # Archivos de Tailwind CSS
+│   └── utils/           # Funciones utilitarias
+├── public/              # Archivos estáticos
+├── tailwind.config.js   # Configuración de Tailwind CSS
+├── tsconfig.json        # Configuración de TypeScript
+└── vite.config.ts       # Configuración de Vite
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## Funcionalidades
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+- **Gestión de usuarios, empleados y cursos:**
+   A través de formularios intuitivos, los usuarios pueden gestionar información relacionada con cursos, usuarios y empleados.
+- **Protección de rutas:**
+  Las rutas privadas solo son accesibles si el usuario ha iniciado sesión, asegurando que no se pueda acceder a información sensible sin la debida autorización.
+- **UI personalizada:**
+  Los componentes visuales (como botones y tablas) están diseñados y estilizados con Material UI para ofrecer una experiencia moderna, accesible y fácil de usar.
+- **Mensajes de éxito y error:**
+  Se usan notificaciones de tipo toast para indicar al usuario el resultado de sus acciones (por ejemplo, cuando se guardan o actualizan datos).

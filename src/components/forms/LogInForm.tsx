@@ -54,10 +54,11 @@ function LogInForm() {
                          focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400
                         transition-colors duration-200 outline-none" {...register('email', {
                     required: 'El correo es obligatorio',
+                    value: 'alan@testing.com',
                     pattern: {
                         value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
                         message: 'Correo inválido'
-                    }
+                    },
                 })} />
             </div>
             {errors.email && (
@@ -72,7 +73,7 @@ function LogInForm() {
                          bg-blue-900/30 border border-blue-800 rounded-lg
                          text-white placeholder-blue-300/50
                          focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400
-                        transition-colors duration-200 outline-none" {...register('password', { required: true })} />
+                        transition-colors duration-200 outline-none" {...register('password', { required: true, value: '12345678' })} />
             </div>
             {errors.password?.type === "required" && (
                 <p role="alert" className="text-red-500 -mt-2 font-semibold text-sm">

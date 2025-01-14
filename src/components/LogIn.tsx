@@ -4,7 +4,6 @@ import 'react-toastify/dist/ReactToastify.css';
 function LogIn() {
     return (
         <div className="min-h-dvh flex flex-col justify-between bg-gradient-to-br from-blue-950 via-blue-900 to-blue-950">
-            <h1 className="mt-auto text-red-500 text-center ">** Este sistema se encuentra en mantenimiento por el momento y estará disponible pronto. Gracias por su paciencia. **</h1>
             <ToastContainer />
             <section className="mt-6 container mx-auto flex flex-col lg:flex-row items-center justify-center p-4 gap-8 lg:gap-16">
                 <article className="text-white font-bold flex flex-col gap-4  text-center lg:text-left">
@@ -22,7 +21,7 @@ function LogIn() {
                     <LogInForm />
                 </article>
             </section>
-            <footer className="mt-auto flex flex-col lg:flex-row lg:gap-2 justify-center items-center w-full py-4 text-center text-blue-200/60 text-sm">
+            <footer className=" flex flex-col lg:flex-row lg:gap-2 justify-center items-center w-full py-4 text-center text-blue-200/60 text-sm">
                 <p>© 2024 Pasaporte de cursos</p>
                 <p className="hidden lg:block">-</p>
                 <p>Desarrollado por <a href="https://github.com/sebasdex" rel="noreferrer" target="_blank">SebastianDC</a></p>

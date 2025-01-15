@@ -115,7 +115,7 @@ El desarrollo de esta aplicación tiene como propósito principal gestionar de m
 
 Para acceder al sistema, utiliza las siguientes credenciales de prueba:
 
-- **Usuario:** *alan@testing.com*   
+- **Usuario:** *anab4n4n@mymail.com*   
 - **Contraseña:** *12345678* (¡Lo sé, no es la más segura!)
     
 Para ver los cursos según el rol de usuario, primero deberás crear un empleado y asignarle uno o más cursos. Luego, asigna un usuario a ese empleado como rol secundario para habilitar el acceso.  

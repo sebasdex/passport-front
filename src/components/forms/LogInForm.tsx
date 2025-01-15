@@ -54,7 +54,7 @@ function LogInForm() {
                          focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400
                         transition-colors duration-200 outline-none" {...register('email', {
                     required: 'El correo es obligatorio',
-                    value: 'alan@testing.com',
+                    value: 'anab4n4n@mymail.com',
                     pattern: {
                         value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
                         message: 'Correo inválido'

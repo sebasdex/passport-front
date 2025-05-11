@@ -27,7 +27,6 @@ interface Courses {
   student: Employee;
 }
 
-
 function App() {
   const arrowLeft = (
     <svg
@@ -77,11 +76,10 @@ function App() {
         });
         if (response.status === 401) {
           setUserData({ role: null, employeeId: null });
-          navigate('/login');
+          navigate("/login");
           return;
         }
-      }
-      catch (error) {
+      } catch (error) {
         console.log("Error al verificar autenticación", error);
       }
     };
@@ -90,23 +88,34 @@ function App() {
 
   useEffect(() => {
     try {
-      const response = fetch(`${import.meta.env.VITE_URL}courses/api/getCourse`, {
-        method: "GET",
-        credentials: "include",
-      });
-      response.then((res) => res.json()).then((data) => {
-        if (data.courses) {
-          setDataCourse(data.courses);
+      const response = fetch(
+        `${import.meta.env.VITE_URL}courses/api/getCourse`,
+        {
+          method: "GET",
+          credentials: "include",
         }
-      });
+      );
+      response
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.courses) {
+            setDataCourse(data.courses);
+          }
+        });
     } catch (error) {
       console.error(error);
     }
   }, []);
 
-  const filteredCourses = dataCourse.filter(course => course.studentId === userData?.employeeId);
-  const employeeData = dataCourse.find(course => course.studentId === userData?.employeeId)?.student;
-  const totalCourses: number = dataCourse.filter(course => course.studentId === userData?.employeeId).length;
+  const filteredCourses = dataCourse.filter(
+    (course) => course.studentId === userData?.employeeId
+  );
+  const employeeData = dataCourse.find(
+    (course) => course.studentId === userData?.employeeId
+  )?.student;
+  const totalCourses: number = dataCourse.filter(
+    (course) => course.studentId === userData?.employeeId
+  ).length;
 
   const handleClickNext = () => {
     if (currentPage < filteredCourses.length) {
@@ -120,16 +129,18 @@ function App() {
     }
   };
 
-  const currentComponent = currentPage === 0 ? (
-    <PassportCover employee={employeeData} totalCourses={totalCourses} />
-  ) : (
-    <InfoCoursesEmployee dataCourse={[filteredCourses[currentPage - 1]]} />
-  );
+  const currentComponent =
+    currentPage === 0 ? (
+      <PassportCover employee={employeeData} totalCourses={totalCourses} />
+    ) : (
+      <InfoCoursesEmployee dataCourse={[filteredCourses[currentPage - 1]]} />
+    );
 
   return (
     <section
-      className={`${currentPage === 0 ? "bg-blue-900" : "bg-white"
-        } text-white min-h-[39rem] rounded-xl shadow-lg w-full min-w-80 max-w-screen-xl mt-10 p-7 flex flex-col gap-4 justify-between relative`}
+      className={`${
+        currentPage === 0 ? "bg-blue-900" : "bg-white"
+      } text-white min-h-[39rem] rounded-xl shadow-lg w-full min-w-80 max-w-screen-xl mt-10 p-7 flex flex-col gap-4 justify-between relative`}
     >
       <button
         className="rounded-full bg-white h-10 w-10 text-black flex items-center justify-center hover:bg-blue-200 transition-all duration-300 absolute left-4 bottom-1/2 border-2 border-blue-200"

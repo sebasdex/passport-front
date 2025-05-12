@@ -152,7 +152,7 @@ function TableUsers({ handleOpen }: TableUsersProps) {
                   sx={{
                     fontWeight: 600,
                     fontSize: "1rem",
-                    bgcolor: "#1976D2", // Azul solicitado
+                    bgcolor: "#1976D2",
                     color: "primary.contrastText",
                     py: 2.5,
                     px: 3,

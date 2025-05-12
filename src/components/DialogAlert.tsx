@@ -1,75 +1,146 @@
 import * as React from "react";
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import useMediaQuery from "@mui/material/useMediaQuery";
-import { useTheme } from "@mui/material/styles";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  useTheme,
+  useMediaQuery,
+} from "@mui/material";
 
 interface DialogAlertProps {
-  iconButton?: JSX.Element | string;
-  handleConfirm?: () => void;
+  iconButton: JSX.Element | string;
+  handleConfirm: () => void;
   buttonText?: string;
-  dialogText?: string;
-  dialogQuestion?: string;
+  dialogText: string;
+  dialogQuestion: string;
+  buttonColorText?:
+    | "primary"
+    | "secondary"
+    | "error"
+    | "info"
+    | "success"
+    | "warning";
   className?: string;
-  buttonColorText?: "primary" | "secondary" | "error" | "info" | "success" | "warning";
 }
 
-export default function ResponsiveDialog({
+export default function DialogAlert({
   iconButton,
   handleConfirm,
-  buttonText,
+  buttonText = "Confirmar",
   dialogText,
   dialogQuestion,
-  buttonColorText,
-  className
+  buttonColorText = "primary",
+  className,
 }: DialogAlertProps) {
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down("xs"));
+  const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const [open, setOpen] = React.useState(false);
-  const handleClickOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
+
+  const handleClickOpen = (
+    e: React.MouseEvent<HTMLButtonElement | HTMLDivElement>
+  ) => {
+    e.preventDefault();
     setOpen(true);
   };
 
-  const handleClose = () => {
-    setOpen(false);
-  };
+  const handleClose = () => setOpen(false);
 
   const handleConfirmAndClose = () => {
-    if (handleConfirm) {
-      handleConfirm(); // Llama a la función de confirmar
-    }
-    handleClose(); // Llama a la función para cerrar el diálogo
+    handleConfirm();
+    handleClose();
   };
 
+  const isStringButton = typeof iconButton === "string";
+
   return (
-    <React.Fragment>
-      <button className={className} onClick={handleClickOpen}>{iconButton}</button>
+    <>
+      {isStringButton ? (
+        <Button
+          variant="contained"
+          color={buttonColorText}
+          onClick={handleClickOpen}
+          className={className}
+          sx={{ textTransform: "none", fontWeight: "bold" }}
+        >
+          {iconButton}
+        </Button>
+      ) : (
+        <div onClick={handleClickOpen} style={{ display: "inline-block" }}>
+          {iconButton}
+        </div>
+      )}
+
       <Dialog
-        fullScreen={fullScreen}
         open={open}
         onClose={handleClose}
-        aria-labelledby="responsive-dialog-title"
+        fullScreen={fullScreen}
         maxWidth="xs"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: 3,
+            p: 2,
+          },
+        }}
       >
-        <DialogTitle id="responsive-dialog-title">{dialogQuestion}</DialogTitle>
-        <DialogContent sx={{ padding: "0 2rem" }}>
-          <DialogContentText>{dialogText}</DialogContentText>
+        <DialogTitle
+          sx={{
+            textAlign: "center",
+            fontWeight: "bold",
+            fontSize: "1.25rem",
+          }}
+        >
+          {dialogQuestion}
+        </DialogTitle>
+
+        <DialogContent>
+          <DialogContentText
+            sx={{
+              textAlign: "center",
+              color: "text.secondary",
+              fontSize: "0.95rem",
+            }}
+          >
+            {dialogText}
+          </DialogContentText>
         </DialogContent>
-        <DialogActions>
-          <Button autoFocus onClick={handleClose}>
+
+        <DialogActions
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            gap: 2,
+            mt: 1,
+            pb: 2,
+          }}
+        >
+          <Button
+            onClick={handleClose}
+            variant="outlined"
+            color="primary"
+            sx={{
+              textTransform: "none",
+              borderRadius: 2,
+            }}
+          >
             Cancelar
           </Button>
-          <Button onClick={handleConfirmAndClose} autoFocus variant="contained" color={buttonColorText}>
-
+          <Button
+            onClick={handleConfirmAndClose}
+            variant="contained"
+            color={buttonColorText}
+            sx={{
+              textTransform: "none",
+              borderRadius: 2,
+            }}
+          >
             {buttonText}
           </Button>
         </DialogActions>
       </Dialog>
-    </React.Fragment>
+    </>
   );
 }

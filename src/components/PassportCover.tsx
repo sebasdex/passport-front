@@ -33,7 +33,9 @@ function PassportCover({ employee, totalCourses }: PassportCoverProps) {
       <header className="flex flex-col gap-4 justify-center items-center lg:flex-row lg:justify-between lg:items-start">
         <div className="text-center lg:text-start">
           <h1 className="text-3xl lg:text-4xl font-bold">Employee Passport</h1>
-          <p className="text-lg lg:text-xl text-blue-200 mt-1">PassportCourses</p>
+          <p className="text-lg lg:text-xl text-blue-200 mt-1">
+            PassportCourses
+          </p>
         </div>
         <div className="h-14 w-14 lg:h-16 lg:w-16 flex items-center justify-center rounded-full bg-yellow-400 text-blue-900">
           {WorldIcon}
@@ -47,8 +49,12 @@ function PassportCover({ employee, totalCourses }: PassportCoverProps) {
             className="rounded-full h-40 w-40 object-cover object-bottom border-4 border-yellow-400"
           />
           <h2 className="text-2xl lg:text-4xl font-bold mt-4 text-center">{`${employee.name} ${employee.firstName} ${employee.lastName}`}</h2>
-          <p className="text-lg lg:text-xl text-blue-200 -mt-2 uppercase">{employee.employeeNumber}</p>
-          <p className="text-base lg:text-lg text-blue-200 -mt-3">{employee.area}</p>
+          <p className="text-lg lg:text-xl text-blue-200 -mt-2 uppercase">
+            {employee.employeeNumber}
+          </p>
+          <p className="text-base lg:text-lg text-blue-200 -mt-3">
+            {employee.area}
+          </p>
           <p className="text-base lg:text-xl text-blue-200 -mt-2">
             {`Total de cursos trabajados: ${totalCourses}`}
           </p>
@@ -63,8 +69,12 @@ function PassportCover({ employee, totalCourses }: PassportCoverProps) {
             alt="employee"
             className="rounded-full h-40 w-40 object-cover object-bottom border-4 border-yellow-400"
           />
-          <h2 className="text-2xl lg:text-4xl font-bold mt-4">No tienes datos registrados</h2>
-          <p className="text-base lg:text-xl text-blue-200 -mt-2">Si tu información no se muestra, espera a que se agreguen tus cursos</p>
+          <h2 className="text-2xl lg:text-4xl font-bold mt-4">
+            No tienes datos registrados
+          </h2>
+          <p className="text-base lg:text-xl text-blue-200 -mt-2">
+            Si tu información no se muestra, espera a que se agreguen tus cursos
+          </p>
         </div>
       )}
       <div className="text-blue-200 text-xs lg:text-sm self-end text-right">

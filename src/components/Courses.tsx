@@ -116,7 +116,15 @@ export default function Courses() {
         mb={3}
       >
         <Box>
-          <Typography variant="h5" fontWeight="bold">
+          <Typography
+            variant="h5"
+            component={"h1"}
+            fontWeight="bold"
+            sx={{
+              fontSize: { xs: "1.6rem", md: "2rem" },
+              lineHeight: 1.2,
+            }}
+          >
             Cursos
           </Typography>
           <Typography variant="body2" color="text.secondary">
@@ -127,7 +135,7 @@ export default function Courses() {
         <Button
           variant="contained"
           startIcon={<AddIcon />}
-          onClick={() => handleEdit(undefined)}
+          onClick={() => handleEdit()}
           size="large"
           fullWidth={!isLg}
           sx={{

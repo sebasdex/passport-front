@@ -1,26 +1,24 @@
-import { useForm, SubmitHandler } from "react-hook-form";
-import ResponsiveDialog from "../DialogAlert";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import {
   Box,
+  Stack,
   TextField,
-  FormControl,
-  Select,
   MenuItem,
-  FormHelperText,
   FormControlLabel,
   Checkbox,
-  Typography,
 } from "@mui/material";
+import ResponsiveDialog from "../DialogAlert";
+import { toast } from "react-toastify";
 
-interface UserFormProps {
+interface UserFormInputs {
   email: string;
   password: string;
   confirmPassword: string;
-  role: number;
-  employeeId: number;
+  role: string;
+  employeeId: string;
+  changePassword: boolean;
 }
 
 interface Employee {
@@ -31,355 +29,300 @@ interface Employee {
   lastName: string;
 }
 
-function UsersForm({ handleClose }: { handleClose: () => void }) {
+interface ApiUser {
+  user?: {
+    email: string;
+    role: number;
+    employeeId: number;
+  };
+  message: string;
+}
+
+export default function UsersForm({
+  handleClose,
+}: {
+  handleClose: () => void;
+}) {
+  const { id } = useParams<{ id: string }>();
   const {
-    register,
+    control,
     handleSubmit,
-    formState: { errors },
     reset,
     setValue,
     watch,
-  } = useForm<UserFormProps>();
-  const [employees, setEmployees] = useState<Employee[]>([]);
-  const [checkUpdate, setCheckUpdate] = useState<boolean>(false);
+    formState: { errors },
+  } = useForm<UserFormInputs>({
+    defaultValues: {
+      email: "",
+      password: "",
+      confirmPassword: "",
+      role: "",
+      employeeId: "",
+      changePassword: false,
+    },
+  });
 
-  const { id } = useParams();
-  const showAlert = (text: string) => {
-    toast.success(text, {
-      position: "top-right",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
-  };
-  const showError = (error: string) => {
-    toast.error(error, {
-      position: "top-right",
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
-  };
-  const onSubmit: SubmitHandler<UserFormProps> = async (data) => {
-    if (data.employeeId) {
-      data.employeeId = Number(data.employeeId);
-    }
-    if (data.confirmPassword !== data.password) {
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const changePassword = watch("changePassword");
+
+  const showAlert = (msg: string) =>
+    toast.success(msg, { position: "top-right", autoClose: 3000 });
+  const showError = (msg: string) =>
+    toast.error(msg, { position: "top-right", autoClose: 3000 });
+
+  //Load employees
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_URL}employees/api/getEmployees`, {
+      method: "GET",
+      credentials: "include",
+    })
+      .then((r) => r.json())
+      .then((data: { employees: Employee[] }) => setEmployees(data.employees))
+      .catch(() => console.error("Error al cargar empleados"));
+  }, []);
+
+  // Load user data if editing
+  useEffect(() => {
+    if (!id) return;
+    fetch(`${import.meta.env.VITE_URL}users/api/getUser/${id}`, {
+      method: "GET",
+      credentials: "include",
+    })
+      .then((r) => r.json())
+      .then((data: ApiUser) => {
+        if (data.user) {
+          setValue("email", data.user.email);
+          setValue("role", String(data.user.role));
+          setValue("employeeId", String(data.user.employeeId));
+        }
+      })
+      .catch(() => showError("Error al cargar usuario"));
+  }, [id, setValue]);
+
+  // Submit
+  const onSubmit: SubmitHandler<UserFormInputs> = async (data) => {
+    if (
+      (!id || data.changePassword) &&
+      data.password !== data.confirmPassword
+    ) {
       showError("Las contraseñas no coinciden");
       return;
     }
-    try {
-      const response = id
-        ? await fetch(`${import.meta.env.VITE_URL}users/api/updateUser/${id}`, {
-            method: "PUT",
-            credentials: "include",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-          })
-        : await fetch(`${import.meta.env.VITE_URL}users/api/addUser`, {
-            method: "POST",
-            credentials: "include",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-          });
-      if (response.ok && id) {
-        const successData = await response.json();
-        showAlert(successData.message);
-        handleCleanForm();
-      } else if (response.ok && !id) {
-        const successData = await response.json();
-        showAlert(successData.message);
-        handleCleanForm();
-      } else {
-        const errorData = await response.json();
-        showError(errorData.message);
-      }
-    } catch (error) {
-      console.error(error);
-      showError("Error en el servidor: " + error);
-    }
-  };
-  useEffect(() => {
-    try {
-      const response = fetch(
-        `${import.meta.env.VITE_URL}employees/api/getEmployees`,
-        {
-          method: "GET",
-          credentials: "include",
-        }
-      );
-      response
-        .then((res) => res.json())
-        .then((data) => {
-          setEmployees(data.employees);
-        });
-    } catch (error) {
-      console.error(error);
-    }
-  }, []);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (id) {
-        try {
-          const response = await fetch(
-            `${import.meta.env.VITE_URL}users/api/getUser/${id}`,
-            {
-              method: "GET",
-              credentials: "include",
-            }
-          );
-          if (response.ok) {
-            const data = await response.json();
-            setValue("email", data.user.email);
-            setValue("role", data.user.role);
-            setValue("employeeId", data.user.employeeId);
-          } else {
-            showError("Error al cargar los datos del usuario");
-          }
-        } catch (error) {
-          console.error("Error al cargar los datos del usuario", error);
-        }
-      }
+    // Build payload
+    const payload: {
+      email: string;
+      role: string;
+      employeeId: number;
+      password?: string;
+    } = {
+      email: data.email,
+      role: data.role,
+      employeeId: Number(data.employeeId),
     };
-    fetchData();
-  }, [id, setValue]);
+    if (!id || data.changePassword) {
+      payload.password = data.password;
+    }
 
-  const handleCleanForm = () => {
-    reset();
-    setCheckUpdate(false);
-    handleClose();
+    try {
+      const url = id
+        ? `${import.meta.env.VITE_URL}users/api/updateUser/${id}`
+        : `${import.meta.env.VITE_URL}users/api/addUser`;
+      const method = id ? "PUT" : "POST";
+      const res = await fetch(url, {
+        method,
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const result = (await res.json()) as ApiUser;
+      if (!res.ok) throw new Error(result.message);
+      showAlert(result.message);
+      reset();
+      handleClose();
+    } catch (e) {
+      showError(e instanceof Error ? e.message : "Error en el servidor");
+    }
   };
-
-  // Watch the values of the fields to display the FormHelperText
-  const roleValue = watch("role");
-  const employeeIdValue = watch("employeeId");
 
   return (
     <Box
       component="section"
       sx={{
-        display: "flex",
-        flexDirection: "column",
-        gap: 3,
         p: { xs: 2, sm: 4 },
         bgcolor: "background.paper",
         borderRadius: 2,
-        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+        maxWidth: { xs: "100%", sm: 500 },
+        mx: "auto",
       }}
     >
-      <Box
-        component="form"
-        onSubmit={handleSubmit(onSubmit)}
-        sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}
-      >
-        <FormControl fullWidth error={!!errors.email}>
-          <Typography
-            variant="body1"
-            component="label"
-            htmlFor="email"
-            sx={{ mb: 1, fontWeight: 500 }}
-          >
-            Email <span style={{ color: "red" }}>*</span>
-          </Typography>
-          <TextField
-            id="email"
-            type="email"
-            placeholder="ej. ivan@gmail.com"
-            {...register("email", { required: true })}
-            variant="outlined"
-            fullWidth
-            sx={{
-              "& .MuiInputBase-input": { py: 1.5 },
-              "& .MuiOutlinedInput-root": {
-                borderRadius: 1,
-                "&:hover fieldset": { borderColor: "primary.main" },
+      <Box component="form" onSubmit={handleSubmit(onSubmit)}>
+        <Stack spacing={3}>
+          {/* Email */}
+          <Controller
+            name="email"
+            control={control}
+            rules={{
+              required: "Email es requerido",
+              pattern: {
+                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                message: "Formato de email inválido",
               },
             }}
-          />
-          <FormHelperText role="alert">
-            {errors.email ? "Email es requerido" : ""}
-          </FormHelperText>
-        </FormControl>
-
-        <FormControl fullWidth error={!!errors.role}>
-          <Typography
-            variant="body1"
-            component="label"
-            htmlFor="role"
-            sx={{ mb: 1, fontWeight: 500 }}
-          >
-            Rol <span style={{ color: "red" }}>*</span>
-          </Typography>
-          <Select
-            id="role"
-            value={roleValue || ""}
-            {...register("role", { required: true })}
-            sx={{
-              borderRadius: 1,
-              "& .MuiSelect-select": { py: 1.5 },
-              "&:hover .MuiOutlinedInput-notchedOutline": {
-                borderColor: "primary.main",
-              },
-            }}
-          >
-            <MenuItem value="">-- Selecciona un rol --</MenuItem>
-            <MenuItem value={import.meta.env.VITE_ROLE_ONE}>
-              {import.meta.env.VITE_ROLE_ONE}
-            </MenuItem>
-            <MenuItem value={import.meta.env.VITE_ROLE_TWO}>
-              {import.meta.env.VITE_ROLE_TWO}
-            </MenuItem>
-          </Select>
-          <FormHelperText role="alert">
-            {errors.role ? "Rol es requerido" : ""}
-          </FormHelperText>
-        </FormControl>
-
-        <FormControl fullWidth error={!!errors.employeeId}>
-          <Typography
-            variant="body1"
-            component="label"
-            htmlFor="employee"
-            sx={{ mb: 1, fontWeight: 500 }}
-          >
-            Empleado <span style={{ color: "red" }}>*</span>
-          </Typography>
-          <Select
-            id="employee"
-            value={employeeIdValue || ""}
-            {...register("employeeId", { required: true })}
-            sx={{
-              borderRadius: 1,
-              textTransform: "capitalize",
-              "& .MuiSelect-select": { py: 1.5 },
-              "&:hover .MuiOutlinedInput-notchedOutline": {
-                borderColor: "primary.main",
-              },
-            }}
-          >
-            <MenuItem value="">-- Selecciona un empleado --</MenuItem>
-            {employees.map((employee) => (
-              <MenuItem
-                key={employee.id}
-                value={employee.id}
-                sx={{ textTransform: "capitalize" }}
-              >
-                {`${employee.employeeNumber} - ${employee.name} ${employee.firstName} ${employee.lastName}`}
-              </MenuItem>
-            ))}
-          </Select>
-          <FormHelperText role="alert">
-            {errors.employeeId ? "Empleado es requerido" : ""}
-          </FormHelperText>
-        </FormControl>
-
-        {id && (
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={checkUpdate}
-                onChange={(e) => setCheckUpdate(e.target.checked)}
-                color="primary"
-                sx={{ "&:hover": { bgcolor: "primary.lighter" } }}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Email *"
+                type="email"
+                fullWidth
+                size="small"
+                slotProps={{
+                  inputLabel: { shrink: true },
+                }}
+                error={!!errors.email}
+                helperText={errors.email?.message}
               />
+            )}
+          />
+
+          {/* Role */}
+          <Controller
+            name="role"
+            control={control}
+            rules={{ required: "Rol es requerido" }}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                select
+                label="Rol *"
+                fullWidth
+                size="small"
+                slotProps={{
+                  inputLabel: { shrink: true },
+                }}
+                error={!!errors.role}
+                helperText={errors.role?.message}
+              >
+                <MenuItem value="">
+                  <em>— Selecciona —</em>
+                </MenuItem>
+                <MenuItem value={import.meta.env.VITE_ROLE_ONE}>
+                  {import.meta.env.VITE_ROLE_ONE}
+                </MenuItem>
+                <MenuItem value={import.meta.env.VITE_ROLE_TWO}>
+                  {import.meta.env.VITE_ROLE_TWO}
+                </MenuItem>
+              </TextField>
+            )}
+          />
+
+          {/* Employee */}
+          <Controller
+            name="employeeId"
+            control={control}
+            rules={{ required: "Empleado es requerido" }}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                select
+                label="Empleado *"
+                fullWidth
+                size="small"
+                slotProps={{
+                  inputLabel: { shrink: true },
+                }}
+                error={!!errors.employeeId}
+                helperText={errors.employeeId?.message}
+              >
+                <MenuItem value="">
+                  <em>— Selecciona —</em>
+                </MenuItem>
+                {employees.map((e) => (
+                  <MenuItem key={e.id} value={String(e.id)}>
+                    {`${e.employeeNumber} – ${e.name} ${e.firstName} ${e.lastName}`}
+                  </MenuItem>
+                ))}
+              </TextField>
+            )}
+          />
+
+          {/* Change password toggle */}
+          {id && (
+            <Controller
+              name="changePassword"
+              control={control}
+              render={({ field }) => (
+                <FormControlLabel
+                  control={<Checkbox {...field} checked={field.value} />}
+                  label="¿Modificar contraseña?"
+                  sx={{ m: 0 }}
+                />
+              )}
+            />
+          )}
+
+          {/* Password */}
+          {(!id || changePassword) && (
+            <Stack spacing={3}>
+              <Controller
+                name="password"
+                control={control}
+                rules={{ required: "Contraseña es requerida" }}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    label="Contraseña *"
+                    type="password"
+                    fullWidth
+                    size="small"
+                    slotProps={{
+                      inputLabel: { shrink: true },
+                    }}
+                    error={!!errors.password}
+                    helperText={errors.password?.message}
+                  />
+                )}
+              />
+              <Controller
+                name="confirmPassword"
+                control={control}
+                rules={{ required: "Confirmar es requerido" }}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    label="Confirmar contraseña *"
+                    type="password"
+                    fullWidth
+                    size="small"
+                    slotProps={{
+                      inputLabel: { shrink: true },
+                    }}
+                    error={!!errors.confirmPassword}
+                    helperText={errors.confirmPassword?.message}
+                  />
+                )}
+              />
+            </Stack>
+          )}
+
+          {/* Confirmation */}
+          <ResponsiveDialog
+            iconButton={id ? "Actualizar" : "Registrar"}
+            buttonText={id ? "Actualizar" : "Aceptar"}
+            dialogQuestion={
+              id
+                ? "¿Estás seguro de actualizar este usuario?"
+                : "¿Estás seguro de registrar este usuario?"
             }
-            label="¿Modificar contraseña?"
-            sx={{
-              py: 1,
-              "& .MuiFormControlLabel-label": { fontSize: "0.95rem" },
-            }}
+            dialogText={
+              id
+                ? "Los datos se actualizarán tal como los ingresaste."
+                : "Los datos se guardarán tal como los ingresaste."
+            }
+            handleConfirm={handleSubmit(onSubmit)}
           />
-        )}
-
-        {(!id || checkUpdate) && (
-          <>
-            <FormControl fullWidth error={!!errors.password}>
-              <Typography
-                variant="body1"
-                component="label"
-                htmlFor="password"
-                sx={{ mb: 1, fontWeight: 500 }}
-              >
-                Contraseña <span style={{ color: "red" }}>*</span>
-              </Typography>
-              <TextField
-                id="password"
-                type="password"
-                placeholder="ej. 123456789"
-                {...register("password", { required: true })}
-                variant="outlined"
-                fullWidth
-                sx={{
-                  "& .MuiInputBase-input": { py: 1.5 },
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: 1,
-                    "&:hover fieldset": { borderColor: "primary.main" },
-                  },
-                }}
-              />
-              <FormHelperText role="alert">
-                {errors.password ? "Contraseña es requerida" : ""}
-              </FormHelperText>
-            </FormControl>
-
-            <FormControl fullWidth error={!!errors.confirmPassword}>
-              <Typography
-                variant="body1"
-                component="label"
-                htmlFor="confirmPassword"
-                sx={{ mb: 1, fontWeight: 500 }}
-              >
-                Confirmar contraseña <span style={{ color: "red" }}>*</span>
-              </Typography>
-              <TextField
-                id="confirmPassword"
-                type="password"
-                placeholder="ej. 123456789"
-                {...register("confirmPassword", { required: true })}
-                variant="outlined"
-                fullWidth
-                sx={{
-                  "& .MuiInputBase-input": { py: 1.5 },
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: 1,
-                    "&:hover fieldset": { borderColor: "primary.main" },
-                  },
-                }}
-              />
-              <FormHelperText role="alert">
-                {errors.confirmPassword
-                  ? "Confirmar contraseña es requerida"
-                  : ""}
-              </FormHelperText>
-            </FormControl>
-          </>
-        )}
-
-        <ResponsiveDialog
-          iconButton={id ? "Actualizar" : "Registrar"}
-          handleConfirm={handleSubmit(onSubmit)}
-          buttonText={id ? "Actualizar" : "Aceptar"}
-          dialogText={
-            id
-              ? "Estos datos se actualizarán en la base de datos tal y como lo ingresaste"
-              : "Los datos se registrarán tal y como los ingresaste"
-          }
-          dialogQuestion={id ? "¿Deseas actualizar ?" : "¿Deseas registrar ?"}
-          className="text-white font-semibold bg-blue-900 p-2 rounded-md hover:bg-blue-800 transition-all duration-300 mt-6"
-        />
+        </Stack>
       </Box>
     </Box>
   );
 }
-
-export default UsersForm;

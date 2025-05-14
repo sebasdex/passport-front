@@ -1,53 +1,122 @@
-import { Box, Modal, Button, Typography, Stack } from "@mui/material";
-import TableUsers from "./dataTable/TableUsers";
-import { useState, useCallback } from "react";
-import UsersForm from "./forms/UsersForm";
-import { useNavigate, useParams } from "react-router-dom";
+import { useState, useEffect, useCallback } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
+import { toast } from "react-toastify";
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  Stack,
+  Typography,
+  useTheme,
+  useMediaQuery,
+} from "@mui/material";
+import TableUsers from "./dataTable/TableUsers";
+import UsersForm from "./forms/UsersForm";
 
-function Users() {
+interface Employee {
+  id: number;
+  employeeNumber: string;
+  name: string;
+  firstName: string;
+  lastName: string;
+}
+
+interface User {
+  id: number;
+  email: string;
+  role: number;
+  employeeId: number;
+  employee: Employee;
+}
+
+export default function Users() {
+  const [rows, setRows] = useState<User[]>([]);
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
 
-  const handleOpen = useCallback(() => setOpen(true), []);
-  const handleClose = useCallback(() => setOpen(false), []);
+  const theme = useTheme();
+  const isLg = useMediaQuery(theme.breakpoints.up("lg"));
+  const isXs = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const addUser = useCallback(() => {
+  // Fetch
+  const fetchUsers = useCallback(async () => {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_URL}users/api/getUsers`, {
+        method: "GET",
+        credentials: "include",
+      });
+      const { users } = await res.json();
+      setRows(users);
+    } catch {
+      toast.error("No se pudieron cargar los usuarios");
+    }
+  }, []);
+
+  // Load initial
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
+
+  // Delete user
+  const handleDelete = useCallback(
+    async (userId: number) => {
+      try {
+        const res = await fetch(
+          `${import.meta.env.VITE_URL}users/api/deleteUser/${userId}`,
+          { method: "DELETE", credentials: "include" }
+        );
+        if (!res.ok) throw new Error();
+        const { message } = await res.json();
+        toast.success(message);
+        fetchUsers();
+      } catch {
+        toast.error("Error al eliminar usuario");
+      }
+    },
+    [fetchUsers]
+  );
+
+  // Open dialog (new or edit)
+  const handleOpen = useCallback(
+    (userId?: number) => {
+      if (userId != null) {
+        navigate(`/users/${userId}`);
+      } else {
+        navigate("/users");
+      }
+      setOpen(true);
+    },
+    [navigate]
+  );
+
+  // Close dialog and refetch
+  const handleClose = useCallback(() => {
+    setOpen(false);
     navigate("/users");
-    handleOpen();
-  }, [navigate, handleOpen]);
-
-  const modalStyle = {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: { xs: "90%", sm: 450 },
-    bgcolor: "background.paper",
-    boxShadow: 24,
-    p: 3,
-    borderRadius: 2,
-    maxHeight: "90vh",
-    overflowY: "auto",
-  };
+    fetchUsers();
+  }, [fetchUsers, navigate]);
 
   return (
     <Box
+      component="main"
       sx={{
         flex: 1,
         display: "flex",
         flexDirection: "column",
-        px: { xs: 2, md: 4 },
-        py: { xs: 2, md: 4 },
-        width: "100%",
+        px: { xs: 2, sm: 3, md: 4 },
+        py: { xs: 2, sm: 3, md: 4 },
+        height: "100%",
       }}
     >
       {/* Header */}
       <Stack
-        direction={{ xs: "column", md: "row" }}
+        direction={isLg ? "row" : "column"}
         justifyContent="space-between"
-        alignItems={{ xs: "flex-start", md: "center" }}
+        alignItems={isLg ? "center" : "stretch"}
         spacing={2}
         mb={3}
       >
@@ -63,31 +132,19 @@ function Users() {
           >
             Usuarios
           </Typography>
-          <Typography
-            variant="body2"
-            color="text.secondary"
-            sx={{ fontSize: { xs: "0.95rem", md: "1rem" }, mt: 0.5 }}
-          >
+          <Typography variant="body2" color="text.secondary">
             Administra los usuarios de la plataforma
           </Typography>
         </Box>
 
         <Button
           variant="contained"
-          color="primary"
           startIcon={<AddIcon />}
-          onClick={addUser}
+          onClick={() => handleOpen()}
+          size="large"
           sx={{
             textTransform: "none",
-            fontWeight: 600,
-            px: { xs: 2, md: 3 },
-            py: { xs: 1, md: 1.5 },
-            fontSize: { xs: "0.85rem", md: "1rem" },
-            width: { xs: "100%", sm: "auto" },
-            maxWidth: { xs: "100%", sm: "none" },
-            "&:hover": {
-              bgcolor: "primary.dark",
-            },
+            alignSelf: isLg ? "auto" : "stretch",
           }}
           aria-label="Agregar nuevo usuario"
         >
@@ -95,39 +152,25 @@ function Users() {
         </Button>
       </Stack>
 
-      {/* Table */}
-      <Box
-        sx={{
-          flex: 1,
-          overflowX: "auto",
-          width: "100%",
-        }}
-      >
-        <TableUsers handleOpen={handleOpen} />
+      {/* Table*/}
+      <Box sx={{ flex: 1, overflow: "auto" }}>
+        <TableUsers rows={rows} onEdit={handleOpen} onDelete={handleDelete} />
       </Box>
 
-      {/* Modal */}
-      <Modal
+      {/* Form in dialog */}
+      <Dialog
         open={open}
         onClose={handleClose}
-        aria-labelledby="modal-title"
-        aria-describedby="modal-description"
+        fullWidth
+        maxWidth="sm"
+        fullScreen={isXs}
+        scroll="paper"
       >
-        <Box sx={modalStyle}>
-          <Typography
-            id="modal-title"
-            variant="h6"
-            component="h2"
-            mb={2}
-            fontWeight="bold"
-          >
-            {id ? "Editar usuario" : "Registrar usuario"}
-          </Typography>
+        <DialogTitle>{id ? "Editar usuario" : "Registrar usuario"}</DialogTitle>
+        <DialogContent dividers>
           <UsersForm handleClose={handleClose} />
-        </Box>
-      </Modal>
+        </DialogContent>
+      </Dialog>
     </Box>
   );
 }
-
-export default Users;

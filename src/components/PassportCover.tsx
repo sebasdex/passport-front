@@ -1,3 +1,5 @@
+import { ReactElement } from "react";
+
 interface Employee {
   name: string;
   firstName: string;
@@ -11,7 +13,10 @@ type PassportCoverProps = {
   totalCourses: number;
 };
 
-function PassportCover({ employee, totalCourses }: PassportCoverProps) {
+export default function PassportCover({
+  employee,
+  totalCourses,
+}: PassportCoverProps): ReactElement {
   const WorldIcon = (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -19,7 +24,7 @@ function PassportCover({ employee, totalCourses }: PassportCoverProps) {
       viewBox="0 0 24 24"
       strokeWidth="1.7"
       stroke="currentColor"
-      className="size-12"
+      className="w-10 h-10 text-white"
     >
       <path
         strokeLinecap="round"
@@ -28,60 +33,69 @@ function PassportCover({ employee, totalCourses }: PassportCoverProps) {
       />
     </svg>
   );
+
   return (
-    <>
-      <header className="flex flex-col gap-4 justify-center items-center lg:flex-row lg:justify-between lg:items-start">
-        <div className="text-center lg:text-start">
-          <h1 className="text-3xl lg:text-4xl font-bold">Employee Passport</h1>
-          <p className="text-lg lg:text-xl text-blue-200 mt-1">
-            PassportCourses
-          </p>
+    <article className="h-full w-full flex flex-col text-gray-50">
+      {/* HEADER */}
+      <header className="flex justify-between items-center px-8 py-4 border-b border-white/30">
+        <div className="space-y-1">
+          <h1 className="text-3xl font-extrabold tracking-tight">
+            Employee Passport
+          </h1>
+          <p className="text-xs uppercase opacity-80">PassportCourses</p>
         </div>
-        <div className="h-14 w-14 lg:h-16 lg:w-16 flex items-center justify-center rounded-full bg-yellow-400 text-blue-900">
-          {WorldIcon}
-        </div>
+        <div className="p-2 rounded-full">{WorldIcon}</div>
       </header>
-      {employee ? (
-        <article className="flex flex-col gap-4 p-4 justify-center items-center">
-          <img
-            src="logo.png"
-            alt="employee"
-            className="rounded-full h-40 w-40 object-cover object-bottom border-4 border-yellow-400"
-          />
-          <h2 className="text-2xl lg:text-4xl font-bold mt-4 text-center">{`${employee.name} ${employee.firstName} ${employee.lastName}`}</h2>
-          <p className="text-lg lg:text-xl text-blue-200 -mt-2 uppercase">
-            {employee.employeeNumber}
-          </p>
-          <p className="text-base lg:text-lg text-blue-200 -mt-3">
-            {employee.area}
-          </p>
-          <p className="text-base lg:text-xl text-blue-200 -mt-2">
-            {`Total de cursos trabajados: ${totalCourses}`}
-          </p>
-          <span className="text-lg lg:text-xl text-blue-200 italic mt-6 text-center">
+
+      {/* MAIN */}
+      <main className="flex-1 grid grid-cols-1 md:grid-cols-2 px-8 py-6 gap-6">
+        {/* LOGO */}
+        <div className="flex items-center justify-center">
+          <div className="h-40 w-40 md:h-48 md:w-48 rounded-full border-4 border-yellow-400 overflow-hidden">
+            <img
+              src="logo.png"
+              alt="employee"
+              className="h-full w-full object-cover"
+            />
+          </div>
+        </div>
+
+        {/* INFO */}
+        <div className="flex flex-col justify-center space-y-4">
+          <div>
+            <p className="text-xs uppercase opacity-70">Nombre</p>
+            <p className="text-lg font-bold leading-tight">
+              {employee
+                ? `${employee.name} ${employee.firstName} ${employee.lastName}`
+                : "—"}
+            </p>
+          </div>
+          <div>
+            <p className="text-xs uppercase opacity-70">Número</p>
+            <p className="text-lg font-bold">
+              {employee?.employeeNumber ?? "—"}
+            </p>
+          </div>
+          <div>
+            <p className="text-xs uppercase opacity-70">Área</p>
+            <p className="text-lg font-bold">{employee?.area ?? "—"}</p>
+          </div>
+          <div>
+            <p className="text-xs uppercase opacity-70">Cursos</p>
+            <p className="text-lg font-bold">{totalCourses}</p>
+          </div>
+          <p className="mt-6 text-xs italic opacity-80">
             Embark on your global learning journey
-          </span>
-        </article>
-      ) : (
-        <div className="flex flex-col gap-4 p-4 justify-center items-center">
-          <img
-            src="logo.png"
-            alt="employee"
-            className="rounded-full h-40 w-40 object-cover object-bottom border-4 border-yellow-400"
-          />
-          <h2 className="text-2xl lg:text-4xl font-bold mt-4">
-            No tienes datos registrados
-          </h2>
-          <p className="text-base lg:text-xl text-blue-200 -mt-2">
-            Si tu información no se muestra, espera a que se agreguen tus cursos
           </p>
         </div>
-      )}
-      <div className="text-blue-200 text-xs lg:text-sm self-end text-right">
-        <p>Expiration Date: 2025-12-31</p>
-      </div>
-    </>
+      </main>
+
+      {/* FOOTER */}
+      <footer className="px-8 py-4 border-t border-white/30 flex justify-end">
+        <time className="text-xs uppercase">
+          Expira: <span className="font-bold">31 Dic 2025</span>
+        </time>
+      </footer>
+    </article>
   );
 }
-
-export default PassportCover;

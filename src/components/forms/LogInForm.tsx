@@ -8,7 +8,8 @@ interface userProps {
   email: string;
   password: string;
 }
-function LogInForm() {
+
+export default function LogInForm() {
   const {
     register,
     handleSubmit,
@@ -16,102 +17,95 @@ function LogInForm() {
     reset,
   } = useForm<userProps>();
   const navigate = useNavigate();
-  const showError = (error: string) => {
-    toast.error(error, {
-      position: "top-right",
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
-  };
+
+  const showError = (msg: string) =>
+    toast.error(msg, { position: "top-right", pauseOnHover: true });
 
   const onSubmit: SubmitHandler<userProps> = async (data) => {
     try {
-      const userExist = await fetch(
-        `${import.meta.env.VITE_URL}auth/api/login`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify(data),
-        }
-      );
-      if (userExist.ok) {
-        navigate("/");
-      } else {
+      const res = await fetch(`${import.meta.env.VITE_URL}auth/api/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(data),
+      });
+      if (res.ok) navigate("/");
+      else {
         showError("El usuario no existe");
         reset();
       }
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+      console.error(err);
     }
   };
 
   return (
-    <form
-      className="flex flex-col gap-4 mt-8"
-      onSubmit={handleSubmit(onSubmit)}
-    >
-      <label htmlFor="email" className="text-sm font-medium text-blue-100">
-        Email empresa *
-      </label>
-      <div className="relative flex items-center">
-        <EmailIcon className="text-blue-100 w-5 h-5 ml-3 absolute" />
-        <input
-          placeholder="Email"
-          className="block pl-11 w-full p-2 py-2.5 text-sm
-                         bg-blue-900/30 border border-blue-800 rounded-lg
-                         text-white placeholder-blue-300/50
-                         focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400
-                        transition-colors duration-200 outline-none"
-          {...register("email", {
-            required: "El correo es obligatorio",
-            value: "anab4n4n@mymail.com",
-            pattern: {
-              value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-              message: "Correo inválido",
-            },
-          })}
-        />
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      {/* Email */}
+      <div>
+        <label
+          htmlFor="email"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Email empresa *
+        </label>
+        <div className="mt-1 relative">
+          <EmailIcon className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400" />
+          <input
+            id="email"
+            type="email"
+            placeholder="tunombre@empresa.com"
+            defaultValue="anab4n4n@mymail.com"
+            {...register("email", {
+              required: "El correo es obligatorio",
+              pattern: {
+                value: /^[^@ ]+@[^@ ]+\.[^@ .]{2,}$/,
+                message: "Correo inválido",
+              },
+            })}
+            className="block w-full pl-10 pr-3 py-2 border-b-2 border-gray-300 bg-transparent placeholder-gray-400 focus:outline-none focus:border-[#1565c0] transition"
+          />
+        </div>
+        {errors.email && (
+          <p role="alert" className="mt-1 text-xs text-red-600">
+            {errors.email.message}
+          </p>
+        )}
       </div>
-      {errors.email && (
-        <p role="alert" className="text-red-500 -mt-2 font-semibold text-sm">
-          {errors.email.message}
-        </p>
-      )}
-      <label htmlFor="password" className="text-sm font-medium text-blue-100">
-        Contraseña *
-      </label>
-      <div className="relative flex items-center">
-        <LockIcon className="text-blue-100 w-5 h-5 ml-3 absolute" />
-        <input
-          type="password"
-          placeholder="Contraseña"
-          className="block pl-11 w-full p-2 py-2.5 text-sm
-                         bg-blue-900/30 border border-blue-800 rounded-lg
-                         text-white placeholder-blue-300/50
-                         focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400
-                        transition-colors duration-200 outline-none"
-          {...register("password", { required: true, value: "12345678" })}
-        />
+
+      {/* Password */}
+      <div>
+        <label
+          htmlFor="password"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Contraseña *
+        </label>
+        <div className="mt-1 relative">
+          <LockIcon className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400" />
+          <input
+            id="password"
+            type="password"
+            placeholder="Tu contraseña"
+            defaultValue="12345678"
+            {...register("password", { required: "Contraseña es requerida" })}
+            className="block w-full pl-10 pr-3 py-2 border-b-2 border-gray-300 bg-transparent placeholder-gray-400 focus:outline-none focus:border-[#1565c0] transition"
+          />
+        </div>
+        {errors.password && (
+          <p role="alert" className="mt-1 text-xs text-red-600">
+            {errors.password.message as string}
+          </p>
+        )}
       </div>
-      {errors.password?.type === "required" && (
-        <p role="alert" className="text-red-500 -mt-2 font-semibold text-sm">
-          Contraseña es requerido
-        </p>
-      )}
+
+      {/* Button */}
       <button
-        className="rounded-lg bg-yellow-400 text-blue-900 font-semibold mt-6 p-2 hover:bg-yellow-500 hover:text-blue-900
-                transition-colors duration-200"
+        type="submit"
+        className="w-full py-2 bg-[#1976d2] text-white font-medium rounded-md shadow hover:bg-[#1565c0] transition"
       >
         Acceder
       </button>
     </form>
   );
 }
-
-export default LogInForm;

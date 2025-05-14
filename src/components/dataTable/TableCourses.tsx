@@ -1,216 +1,273 @@
-import { useEffect, useState } from "react";
-import Paper from "@mui/material/Paper";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TablePagination from "@mui/material/TablePagination";
-import TableRow from "@mui/material/TableRow";
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import {
+  Box,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TablePagination,
+  TableRow,
+  IconButton,
+  Typography,
+  useTheme,
+  useMediaQuery,
+  Stack,
+  Card,
+  CardContent,
+} from "@mui/material";
+import { styled } from "@mui/material/styles";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import DialogAlert from "../DialogAlert";
-import { toast } from "react-toastify";
 
 interface Employee {
-    name: string;
-    firstName: string;
-    lastName: string;
+  name: string;
+  firstName: string;
+  lastName: string;
 }
-
 interface Course {
-    id: number;
-    courseName: string;
-    description: string;
-    startDate: string;
-    endDate: string;
-    instructor: string;
-    approved: boolean;
-    place: string;
-    studentId: string;
-    student: Employee;
+  id: number;
+  courseName: string;
+  description: string;
+  startDate: string;
+  endDate: string | null;
+  instructor: string;
+  approved: boolean;
+  place: string;
+  student: Employee;
+}
+interface TableCoursesProps {
+  rows: Course[];
+  onEdit: (id?: number) => void;
+  onDelete: (id: number) => void;
 }
 
-function TableCourses() {
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(10);
-    const [rows, setRows] = useState<Course[]>([]);
-    const navigate = useNavigate();
-    const handleChangePage = (_event: unknown, newPage: number) => {
-        setPage(newPage);
-    };
+const HeaderCell = styled(TableCell)(({ theme }) => ({
+  fontWeight: 600,
+  backgroundColor: theme.palette.primary.main,
+  color: theme.palette.primary.contrastText,
+  borderBottom: "none",
+  padding: theme.spacing(2, 3),
+}));
 
-    const handleChangeRowsPerPage = (
-        event: React.ChangeEvent<HTMLInputElement>
-    ) => {
-        setRowsPerPage(+event.target.value);
-        setPage(0);
-    };
+const BodyCell = styled(TableCell)(({ theme }) => ({
+  borderBottom: `1px solid ${theme.palette.grey[200]}`,
+  padding: theme.spacing(1.5, 3),
+}));
 
-    const handleClick = (id: number) => {
-        navigate(`/courses/${id}`);
-    };
+export default function TableCourses({
+  rows,
+  onEdit,
+  onDelete,
+}: TableCoursesProps) {
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const theme = useTheme();
+  // Desktop large screens
+  const isDesktop = useMediaQuery(theme.breakpoints.up("lg"));
 
-    const showAlert = (text: string) => {
-        toast.success(text, {
-            position: "top-right",
-            autoClose: 3000, // 3 segundos
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-        });
-    };
+  // Date format
+  const fmtDate = (d: string | null) =>
+    d
+      ? new Date(d).toLocaleDateString("es-ES", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        })
+      : "—";
 
-    const showError = (error: string) => {
-        toast.error(error, {
-            position: "top-right",
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-        });
-    };
+  // Data of current page
+  const slice = rows.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
 
-    const deleteCourse = async (id: number): Promise<void> => {
-        try {
-            const response = await fetch(`${import.meta.env.VITE_URL}courses/api/deleteCourse/${id}`, {
-                method: "DELETE",
-                credentials: 'include',
-            });
-            if (response.ok) {
-                showAlert("Curso eliminado correctamente");
-            } else {
-                showError("Error al eliminar curso");
-            }
-        } catch (error) {
-            console.error("Error al eliminar curso", error);
-        }
-    };
+  return (
+    <Paper
+      sx={{
+        width: "100%",
+        borderRadius: 3,
+        boxShadow: "0 6px 20px rgba(0,0,0,0.15)",
+        border: "1px solid grey.200",
+        bgcolor: "background.paper",
+        overflow: "hidden",
+      }}
+    >
+      {isDesktop ? (
+        // ---------- Desktop: Table ----------
+        <TableContainer sx={{ maxHeight: 500 }}>
+          <Table stickyHeader aria-label="tabla de cursos">
+            <TableHead>
+              <TableRow>
+                {[
+                  "Curso",
+                  "Descripción",
+                  "Lugar",
+                  "Inicio",
+                  "Término",
+                  "Instructor",
+                  "Empleado",
+                  "Aprobado",
+                  "",
+                  "",
+                ].map((label) => (
+                  <HeaderCell key={label}>{label}</HeaderCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {slice.map((row) => (
+                <TableRow hover key={row.id}>
+                  <BodyCell>{row.courseName}</BodyCell>
+                  <BodyCell>{row.description}</BodyCell>
+                  <BodyCell>{row.place}</BodyCell>
+                  <BodyCell>{fmtDate(row.startDate)}</BodyCell>
+                  <BodyCell>
+                    {row.endDate ? fmtDate(row.endDate) : "Pendiente"}
+                  </BodyCell>
+                  <BodyCell>{row.instructor}</BodyCell>
+                  <BodyCell>
+                    {`${row.student.name} ${row.student.firstName} ${row.student.lastName}`}
+                  </BodyCell>
+                  <BodyCell>
+                    <Box
+                      component="span"
+                      sx={{
+                        bgcolor: row.approved ? "success.main" : "error.main",
+                        color: "common.white",
+                        p: 0.5,
+                        borderRadius: 0.5,
+                        fontSize: "0.75rem",
+                      }}
+                    >
+                      {row.approved ? "Aprobado" : "Denegado"}
+                    </Box>
+                  </BodyCell>
+                  <BodyCell align="center">
+                    <IconButton onClick={() => onEdit(row.id)} size="small">
+                      <EditIcon fontSize="small" />
+                    </IconButton>
+                  </BodyCell>
+                  <BodyCell align="center">
+                    <DialogAlert
+                      iconButton={
+                        <IconButton size="small">
+                          <DeleteIcon fontSize="small" />
+                        </IconButton>
+                      }
+                      dialogQuestion="¿Deseas eliminar este curso?"
+                      dialogText="Esta acción es irreversible."
+                      buttonText="Eliminar"
+                      buttonColorText="error"
+                      handleConfirm={() => onDelete(row.id)}
+                    />
+                  </BodyCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      ) : (
+        // ---------- Mobile ----------
+        <Stack spacing={2}>
+          {slice.map((row) => (
+            <Card key={row.id} variant="outlined">
+              <CardContent sx={{ p: 2 }}>
+                <Typography variant="subtitle1" fontWeight="bold">
+                  {row.courseName}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  gutterBottom
+                  noWrap
+                >
+                  {row.place} · {fmtDate(row.startDate)}
+                  {row.endDate && ` - ${fmtDate(row.endDate)}`}
+                </Typography>
+                <Typography variant="body2" noWrap>
+                  {row.description}
+                </Typography>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  display="block"
+                  mt={1}
+                >
+                  Instructor: {row.instructor}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  Empleado:{" "}
+                  {`${row.student.name} ${row.student.firstName} ${row.student.lastName}`}
+                </Typography>
+                <Box mt={1}>
+                  <Box
+                    component="span"
+                    sx={{
+                      bgcolor: row.approved ? "success.main" : "error.main",
+                      color: "common.white",
+                      p: 0.5,
+                      borderRadius: 0.5,
+                      fontSize: "0.75rem",
+                    }}
+                  >
+                    {row.approved ? "Aprobado" : "Denegado"}
+                  </Box>
+                </Box>
+                <Stack direction="row" spacing={1} mt={2}>
+                  <IconButton onClick={() => onEdit(row.id)} size="small">
+                    <EditIcon fontSize="small" />
+                  </IconButton>
+                  <DialogAlert
+                    iconButton={
+                      <IconButton size="small">
+                        <DeleteIcon fontSize="small" />
+                      </IconButton>
+                    }
+                    dialogQuestion="¿Deseas eliminar este curso?"
+                    dialogText="Esta acción es irreversible."
+                    buttonText="Eliminar"
+                    buttonColorText="error"
+                    handleConfirm={() => onDelete(row.id)}
+                  />
+                </Stack>
+              </CardContent>
+            </Card>
+          ))}
+        </Stack>
+      )}
 
-    useEffect(() => {
-        try {
-            async function fetchData() {
-                const response = await fetch(`${import.meta.env.VITE_URL}courses/api/getCourse`, {
-                    method: "GET",
-                    credentials: 'include',
-                });
-                const data = await response.json();
-                setRows(data.courses);
-            }
-            fetchData();
-        } catch (error) {
-            console.error("Error al obtener los empleados", error);
-        }
-    }, [rows]);
-    return (
-
-        <Paper sx={{ minWidth: "200px", width: "100%", maxWidth: "90vw", overflow: "hidden", marginTop: "4rem", }}>
-            <TableContainer sx={{ maxHeight: 500 }}>
-                <Table stickyHeader aria-label="sticky table">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell align="left" width={200}>
-                                Curso
-                            </TableCell>
-                            <TableCell align="left" width={200}>
-                                Descripción
-                            </TableCell>
-                            <TableCell align="left" width={200} className="text-center">
-                                Lugar
-                            </TableCell>
-                            <TableCell align="left" width={200}>
-                                Inicio
-                            </TableCell>
-                            <TableCell align="left" width={200}>
-                                Término
-                            </TableCell>
-                            <TableCell align="left" width={200}>
-                                Instructor
-                            </TableCell>
-                            <TableCell align="left" width={200}>
-                                Empleado
-                            </TableCell>
-                            <TableCell align="left" width={200}>
-                                ¿Aprobado?
-                            </TableCell>
-                            <TableCell></TableCell>
-                            <TableCell></TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {rows?.length > 0 ? (
-                            rows
-                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map((row) => {
-                                    return (
-                                        <TableRow hover role="checkbox" tabIndex={-1} key={row?.id}>
-                                            <TableCell align="left" width={200}>
-                                                {row?.courseName}
-                                            </TableCell>
-                                            <TableCell align="left" width={200}>
-                                                {row?.description}
-                                            </TableCell>
-                                            <TableCell align="left" width={200} className="text-center">
-                                                {row?.place}
-                                            </TableCell>
-                                            <TableCell align="left" width={200}>
-                                                {row?.startDate ? new Date(row?.startDate).toLocaleDateString('es-ES', { month: 'short', day: 'numeric', year: 'numeric' }) : "No iniciado"}
-                                            </TableCell>
-                                            <TableCell align="left" width={200}>
-                                                <p className={`w-fit rounded-sm ${row?.endDate === null && "bg-red-500 text-white p-1 text-xs font-semibold"}`}>{row?.endDate ? new Date(row.endDate).toLocaleDateString('es-ES', { month: 'short', day: 'numeric', year: 'numeric' }) : "Pendiente"}</p>
-                                            </TableCell>
-                                            <TableCell align="left" width={200}>
-                                                {row?.instructor}
-                                            </TableCell>
-                                            <TableCell align="left" width={200}>
-                                                {`${row?.student.name} ${row?.student.firstName} ${row?.student.lastName} `}
-                                            </TableCell>
-                                            <TableCell align="left" width={200}>
-                                                <p className={`p-1 text-xs font-semibold text-white w-fit rounded-sm ${row?.approved ? "bg-green-500" : "bg-red-500"}`}>{row?.approved ? "Aprobado" : "Denegado"}</p>
-                                            </TableCell>
-                                            <TableCell className="flex justify-end">
-                                                <button onClick={() => handleClick(row?.id)}>
-                                                    {<EditIcon />}
-                                                </button>
-                                            </TableCell>
-                                            <TableCell className="flex justify-end">
-                                                <DialogAlert
-                                                    iconButton={<DeleteIcon className="text-red-500 hover:text-red-700 hover:cursor-pointer" />}
-                                                    dialogQuestion="¿Está seguro de eliminar este curso?"
-                                                    dialogText="Esta acción no se puede deshacer y eliminará permanentemente el curso."
-                                                    buttonText="Eliminar"
-                                                    buttonColorText="error"
-                                                    handleConfirm={() => deleteCourse(row?.id)}
-                                                />
-                                            </TableCell>
-                                        </TableRow>
-                                    );
-                                })
-                        ) : (
-                            <TableRow>
-                                <TableCell colSpan={8} align="center">
-                                    No se encontraron datos
-                                </TableCell>
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-            <TablePagination
-                rowsPerPageOptions={[10, 25, 100]}
-                component="div"
-                count={rows.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-            />
-        </Paper>
-    )
+      {/* Pagination */}
+      <Box px={!isDesktop ? 2 : 0}>
+        <TablePagination
+          component="div"
+          count={rows.length}
+          page={page}
+          rowsPerPage={rowsPerPage}
+          onPageChange={(_e, p) => setPage(p)}
+          onRowsPerPageChange={(e) => {
+            setRowsPerPage(+e.target.value);
+            setPage(0);
+          }}
+          rowsPerPageOptions={[10, 25, 100]}
+          sx={{
+            bgcolor: "grey.50",
+            borderTop: "1px solid grey.200",
+            py: 1,
+            "& .MuiTablePagination-selectLabel, .MuiTablePagination-displayedRows":
+              {
+                fontSize: "0.9rem",
+                color: "text.secondary",
+                fontWeight: 500,
+              },
+            "& .MuiTablePagination-actions .MuiIconButton-root": {
+              color: "primary.main",
+            },
+          }}
+        />
+      </Box>
+    </Paper>
+  );
 }
-
-export default TableCourses

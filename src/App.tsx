@@ -113,9 +113,7 @@ function App() {
   const employeeData = dataCourse.find(
     (course) => course.studentId === userData?.employeeId
   )?.student;
-  const totalCourses: number = dataCourse.filter(
-    (course) => course.studentId === userData?.employeeId
-  ).length;
+  const totalCourses: number = filteredCourses.length;
 
   const handleClickNext = () => {
     if (currentPage < filteredCourses.length) {
@@ -138,18 +136,34 @@ function App() {
 
   return (
     <section
-      className={`${
-        currentPage === 0 ? "bg-[#1976D2]" : "bg-white"
-      } text-white min-h-[39rem] rounded-xl shadow-lg w-full min-w-80 max-w-screen-xl mt-10 p-7 flex flex-col gap-4 justify-between relative`}
+      className={`
+        ${
+          currentPage === 0
+            ? "bg-[#1976d2] text-white"
+            : "bg-white text-gray-800"
+        }
+        w-full max-w-screen-2xl mx-auto
+        px-4 py-8 md:px-8 md:py-12
+        rounded-2xl shadow-xl
+        flex flex-col justify-between relative
+      `}
     >
       <button
-        className="rounded-full bg-white h-10 w-10 text-black flex items-center justify-center hover:bg-blue-200 transition-all duration-300 absolute left-4 bottom-1/2 border-2 border-blue-200"
+        className="absolute left-4 top-1/2 -translate-y-1/2
+                   bg-white/80 hover:bg-white shadow-lg
+                   focus:ring-2 focus:ring-blue-300
+                   rounded-full p-3 md:p-4 text-blue-600
+                   transition"
         onClick={handleClickPrev}
       >
         {arrowLeft}
       </button>
       <button
-        className="rounded-full bg-white h-10 w-10 text-black flex items-center justify-center hover:bg-blue-200 transition-all duration-300 absolute right-4 bottom-1/2 border-2 border-blue-200"
+        className="absolute right-4 top-1/2 -translate-y-1/2
+                   bg-white/80 hover:bg-white shadow-lg
+                   focus:ring-2 focus:ring-blue-300
+                   rounded-full p-3 md:p-4 text-blue-600
+                   transition"
         onClick={handleClickNext}
       >
         {arrowRight}

@@ -1,8 +1,25 @@
 import { useEffect, useState } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
-import DialogAlert from "../DialogAlert";
-import { toast } from "react-toastify";
+import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { useParams, useNavigate } from "react-router-dom";
+import {
+  Box,
+  Stack,
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Checkbox,
+  FormControlLabel,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+} from "@mui/material";
+import { toast } from "react-toastify";
+
 interface CoursesFormProps {
   courseName?: string;
   description?: string;
@@ -11,7 +28,7 @@ interface CoursesFormProps {
   instructor?: string;
   approved?: boolean;
   place?: string;
-  studentId?: number;
+  studentId?: number | string;
 }
 interface Employee {
   id: number;
@@ -22,255 +39,331 @@ interface Employee {
   email: string;
   area: string;
 }
-function CoursesForm() {
-  const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm<CoursesFormProps>();
+
+export default function CoursesForm({
+  handleClose,
+}: {
+  handleClose: () => void;
+}) {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    setValue,
+    getValues,
+  } = useForm<CoursesFormProps>({
+    defaultValues: {
+      courseName: "",
+      description: "",
+      startDate: "",
+      endDate: "",
+      instructor: "",
+      approved: false,
+      place: "",
+      studentId: "",
+    },
+  });
+
   const [employees, setEmployees] = useState<Employee[]>([]);
   const { id } = useParams();
   const navigate = useNavigate();
-  const showAlert = (text: string) => {
-    toast.success(text, {
-      position: "top-right",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
-  };
-  const showError = (error: string) => {
-    toast.error(error, {
-      position: "top-right",
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
-  };
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
-  const handleNewCourse = () => {
-    navigate("/courses");
-    reset();
-  };
+  const showAlert = (msg: string) =>
+    toast.success(msg, { position: "top-right", autoClose: 3000 });
+  const showError = (msg: string) =>
+    toast.error(msg, { position: "top-right" });
 
+  // Load data if ID
   useEffect(() => {
-    const fetchData = async () => {
-      if (id) {
-        try {
-          const response = await fetch(`${import.meta.env.VITE_URL}courses/api/getCourse/${id}`, {
-            method: "GET",
-            credentials: 'include',
-          });
-          if (response.ok) {
-            const data = await response.json()
-            setValue("courseName", data.course.courseName);
-            setValue("description", data.course.description);
-            setValue("startDate", data.course.startDate ? new Date(data.course.startDate).toLocaleDateString('en-CA') : "");
-            setValue("endDate", data.course.endDate ? new Date(data.course.endDate).toLocaleDateString('en-CA') : "");
-            setValue("instructor", data.course.instructor);
-            setValue("approved", data.course.approved);
-            setValue("studentId", data.course.studentId);
-            setValue("place", data.course.place);
-          } else {
-            showError("Error al cargar los datos del curso")
-          }
-        } catch (error) {
-          console.error("Error al cargar los datos del curso", error);
+    if (!id) return;
+    (async () => {
+      try {
+        const res = await fetch(
+          `${import.meta.env.VITE_URL}courses/api/getCourse/${id}`,
+          { method: "GET", credentials: "include" }
+        );
+        if (!res.ok) {
+          showError("Error al cargar datos");
+          return;
         }
+        const { course } = await res.json();
+        setValue("courseName", course.courseName);
+        setValue("description", course.description);
+        setValue(
+          "startDate",
+          course.startDate
+            ? new Date(course.startDate).toISOString().split("T")[0]
+            : ""
+        );
+        setValue(
+          "endDate",
+          course.endDate
+            ? new Date(course.endDate).toISOString().split("T")[0]
+            : ""
+        );
+        setValue("instructor", course.instructor);
+        setValue("approved", course.approved);
+        setValue("studentId", course.studentId);
+        setValue("place", course.place);
+      } catch {
+        showError("Error al cargar datos");
       }
-    }
-    fetchData();
+    })();
   }, [id, setValue]);
 
-
+  // Load employees
   useEffect(() => {
-    try {
-      const getEmployees = async () => {
-        const response = await fetch(`${import.meta.env.VITE_URL}employees/api/getEmployees`, {
-          method: "GET",
-          credentials: 'include',
-        });
-        const data = await response.json();
-        setEmployees(data.employees);
-      };
-      getEmployees();
-    } catch (error) {
-      console.error("Error al obtener los empleados", error);
-    }
+    (async () => {
+      try {
+        const res = await fetch(
+          `${import.meta.env.VITE_URL}employees/api/getEmployees`,
+          { method: "GET", credentials: "include" }
+        );
+        const { employees } = await res.json();
+        setEmployees(employees);
+      } catch {
+        console.error("Error al cargar empleados");
+      }
+    })();
   }, []);
-  const onSubmit: SubmitHandler<CoursesFormProps> = async (data) => {
-    if (data.studentId) {
-      data.studentId = Number(data.studentId);
-    }
+
+  // Save logic
+  const apiSubmit: SubmitHandler<CoursesFormProps> = async (data) => {
+    if (data.studentId) data.studentId = Number(data.studentId);
     try {
-      const response = id ? await fetch(`${import.meta.env.VITE_URL}courses/api/updateCourse/${id}`, {
-        method: "PUT",
-        credentials: 'include',
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data)
-      }) : await fetch(`${import.meta.env.VITE_URL}courses/api/addCourse`, {
-        method: "POST",
-        credentials: 'include',
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data)
+      const url = id
+        ? `${import.meta.env.VITE_URL}courses/api/updateCourse/${id}`
+        : `${import.meta.env.VITE_URL}courses/api/addCourse`;
+      const method = id ? "PUT" : "POST";
+      const res = await fetch(url, {
+        method,
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
       });
-      if (response.ok) {
-        showAlert(id ? "Datos actualizados correctamente" : "Datos guardados correctamente");
-        handleNewCourse();
+      if (!res.ok) {
+        showError("Error al guardar datos");
         return;
       }
-      showError("Error al guardar los datos");
-    } catch (error) {
-      console.log("Error al guardar los datos", error);
+      showAlert(id ? "Datos actualizados" : "Datos guardados");
+      navigate("/courses");
+      reset();
+      handleClose();
+    } catch {
+      showError("Error al guardar datos");
     }
   };
+
+  // Confirm before submit
+  const onSubmit = () => setConfirmOpen(true);
+  const handleConfirm = () => {
+    setConfirmOpen(false);
+    apiSubmit(getValues());
+  };
+
   return (
-    <section className="flex flex-col gap-4 p-4">
-      <h1 className="text-4xl font-bold">Formulario de cursos</h1>
-      <button
-        className="text-blue-900 font-semibold bg-blue-200 p-2 rounded-md hover:bg-blue-300 transition-all duration-300"
-        onClick={() => handleNewCourse()}
-      >
-        Nuevo registro
-      </button>
-      <form className="flex flex-col gap-4">
-        <label htmlFor="name" className="text-blue-900 font-semibold">
-          Nombre del curso <span className="text-red-500">*</span>
-        </label>
-        <input
-          type="text"
-          placeholder="Ej. Programación"
-          className="w-full border-2 border-blue-200 p-2 rounded-md"
-          {...register("courseName", { required: true })}
-          aria-invalid={errors.courseName ? "true" : "false"}
-        />
-        {errors.courseName?.type === "required" && (
-          <p role="alert" className="text-red-500 -mt-2 font-semibold text-sm">
-            Nombre del curso es requerido
-          </p>
-        )}
-        <label htmlFor="description" className="text-blue-900 font-semibold">
-          Descripción del curso <span className="text-red-500">*</span>
-        </label>
-        <textarea
-          placeholder="Ej. Curso de programación para principiantes"
-          className="w-full border-2 border-blue-200 p-2 rounded-md"
-          {...register("description", { required: true })}
-          aria-invalid={errors.description ? "true" : "false"}
-        >
-        </textarea>
-        {errors.description?.type === "required" && (
-          <p role="alert" className="text-red-500 -mt-2 font-semibold text-sm">
-            Descripción del curso es requerida
-          </p>
-        )}
-        <label htmlFor="startDate" className="text-blue-900 font-semibold">
-          Fecha de inicio <span className="text-red-500">*</span>
-        </label>
-        <input
-          type="date"
-          placeholder="Fecha de inicio"
-          className="w-full border-2 border-blue-200 p-2 rounded-md"
-          {...register("startDate", { required: true })}
-          aria-invalid={errors.startDate ? "true" : "false"}
-        />
-        {errors.startDate?.type === "required" && (
-          <p role="alert" className="text-red-500 -mt-2 font-semibold text-sm">
-            Fecha de inicio es requerida
-          </p>
-        )}
-        <label htmlFor="endDate" className="text-blue-900 font-semibold">
-          Fecha de finalización
-        </label>
-        <input
-          type="date"
-          placeholder="Fecha de finalización"
-          className="w-full border-2 border-blue-200 p-2 rounded-md"
-          {...register("endDate")}
-        />
-        <label htmlFor="instructor" className="text-blue-900 font-semibold">
-          Instructor del curso <span className="text-red-500">*</span>
-        </label>
-        <select
-          className="w-full border-2 border-blue-200 p-2 rounded-md"
-          {...register("instructor", { required: true })}
-          aria-invalid={errors.instructor ? "true" : "false"}
-        >
-          <option value="">-- Selecciona una opción --</option>
-          <option value="Ivan le Roux">Ivan le Roux</option>
-          <option value="John Doe">John Doe</option>
-          <option value="Jane Doe">Jane Doe</option>
-          <option value="Robert Johnson">Robert Johnson</option>
-        </select>
-        {errors.instructor?.type === "required" && (
-          <p role="alert" className="text-red-500 -mt-2 font-semibold text-sm">
-            Instructor del curso es requerido
-          </p>
-        )}
-        <label htmlFor="studentId" className="text-blue-900 font-semibold">
-          ¿Quién toma el curso? <span className="text-red-500">*</span>
-        </label>
-        <select
-          className="w-full border-2 border-blue-200 p-2 rounded-md"
-          {...register("studentId", { required: true })}
-          aria-invalid={errors.studentId ? "true" : "false"}
-        >
-          <option value="">-- Selecciona una opción --</option>
-          {employees?.map((employee) => (
-            <option key={employee.id} value={employee.id}>
-              {`${employee.name} ${employee.firstName} ${employee.lastName}`}
-            </option>
-          ))}
-        </select>
-        {errors.studentId?.type === "required" && (
-          <p role="alert" className="text-red-500 -mt-2 font-semibold text-sm">
-            ¿Quién toma el curso es requerido
-          </p>
-        )}
-        <div className="flex justify-between">
-          <label htmlFor="approved" className="text-blue-900 font-semibold">
-            ¿Aprobado?
-          </label>
-          <input type="checkbox" className="w-5 border-2 border-blue-200 p-2 rounded-md"
-            {...register("approved")}
+    <Box p={3}>
+      <form onSubmit={handleSubmit(onSubmit)} noValidate>
+        <Stack spacing={2}>
+          {/* Course name */}
+          <Controller
+            name="courseName"
+            control={control}
+            rules={{ required: "Se necesita un nombre" }}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Nombre del curso *"
+                fullWidth
+                error={!!errors.courseName}
+                helperText={errors.courseName?.message}
+                slotProps={{
+                  formHelperText: { sx: { mx: 0 } },
+                }}
+              />
+            )}
           />
-        </div>
-        <label htmlFor="place" className="text-blue-900 font-semibold">
-          Lugar donde será el curso <span className="text-red-500">*</span>
-        </label>
-        <select
-          className="w-full border-2 border-blue-200 p-2 rounded-md"
-          {...register("place", { required: true })}
-          aria-invalid={errors.place ? "true" : "false"}
-        >
-          <option value="">-- Selecciona una opción --</option>
-          <option value="En línea">En línea</option>
-          <option value="Sucursal uno">Sucursal uno</option>
-          <option value="Sucursal dos">Sucursal dos</option>
-          <option value="Planta principal">Planta principal</option>
-          <option value="Sucursal Mexico">Sucursal Mexico</option>
-        </select>
-        {errors.place?.type === "required" && (
-          <p role="alert" className="text-red-500 -mt-2 font-semibold text-sm">
-            Lugar donde se llevará a cabo el curso es requerido
-          </p>
-        )}
-        <DialogAlert
-          iconButton={id ? "Actualizar" : "Registrar"}
-          className="text-white font-semibold bg-blue-900 p-2 rounded-md hover:bg-blue-800 transition-all duration-300 mt-6"
-          buttonText={id ? "Actualizar" : "Aceptar"}
-          dialogText={id ? "Los datos se actualizarán en la base de datos tal y como lo ingresaste" : "Los datos se guardarán en la base de datos tal y como lo ingresaste"}
-          dialogQuestion={id ? "¿Estás seguro de que deseas actualizar estos datos?" : "¿Estás seguro de que deseas registrar estos datos?"}
-          handleConfirm={handleSubmit(onSubmit)}
-        />
+
+          {/* Description */}
+          <Controller
+            name="description"
+            control={control}
+            rules={{ required: "Se necesita una descripción" }}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Descripción *"
+                fullWidth
+                multiline
+                rows={3}
+                error={!!errors.description}
+                helperText={errors.description?.message}
+                slotProps={{
+                  formHelperText: { sx: { mx: 0 } },
+                }}
+              />
+            )}
+          />
+
+          {/* Dates */}
+          <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+            <Controller
+              name="startDate"
+              control={control}
+              rules={{ required: "Se necesita una fecha" }}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Fecha de inicio *"
+                  type="date"
+                  fullWidth
+                  error={!!errors.startDate}
+                  helperText={errors.startDate?.message}
+                  slotProps={{
+                    inputLabel: { shrink: true },
+                    formHelperText: { sx: { mx: 0 } },
+                  }}
+                />
+              )}
+            />
+            <Controller
+              name="endDate"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Fecha de finalización"
+                  type="date"
+                  fullWidth
+                  slotProps={{ inputLabel: { shrink: true } }}
+                />
+              )}
+            />
+          </Stack>
+
+          {/* Instructor */}
+          <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+            <FormControl fullWidth error={!!errors.instructor}>
+              <InputLabel>Instructor *</InputLabel>
+              <Controller
+                name="instructor"
+                control={control}
+                render={({ field }) => (
+                  <Select {...field} label="Instructor *">
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
+                    <MenuItem value="Ivan le Roux">Ivan le Roux</MenuItem>
+                    <MenuItem value="John Doe">John Doe</MenuItem>
+                    <MenuItem value="Jane Doe">Jane Doe</MenuItem>
+                    <MenuItem value="Robert Johnson">Robert Johnson</MenuItem>
+                  </Select>
+                )}
+              />
+            </FormControl>
+
+            <FormControl fullWidth error={!!errors.studentId}>
+              <InputLabel>¿Quién toma el curso? *</InputLabel>
+              <Controller
+                name="studentId"
+                control={control}
+                render={({ field }) => (
+                  <Select {...field} label="¿Quién toma el curso? *">
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
+                    {employees.map((e) => (
+                      <MenuItem key={e.id} value={e.id}>
+                        {`${e.name} ${e.firstName} ${e.lastName}`}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                )}
+              />
+            </FormControl>
+          </Stack>
+
+          {/* Approved & Place */}
+          <Stack
+            direction={{ xs: "column", sm: "row" }}
+            spacing={2}
+            alignItems="center"
+          >
+            <Controller
+              name="approved"
+              control={control}
+              render={({ field }) => (
+                <FormControlLabel
+                  control={<Checkbox {...field} checked={!!field.value} />}
+                  label="Aprobado"
+                  sx={{
+                    m: 0,
+                    border: "1px solid #ccc",
+                    pl: 1,
+                    pr: 1,
+                    height: 55,
+                    borderRadius: 1,
+                  }}
+                />
+              )}
+            />
+            <FormControl fullWidth error={!!errors.place}>
+              <InputLabel>Lugar *</InputLabel>
+              <Controller
+                name="place"
+                control={control}
+                render={({ field }) => (
+                  <Select {...field} label="Lugar *">
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
+                    <MenuItem value="En línea">En línea</MenuItem>
+                    <MenuItem value="Sucursal uno">Sucursal uno</MenuItem>
+                    <MenuItem value="Sucursal dos">Sucursal dos</MenuItem>
+                    <MenuItem value="Planta principal">
+                      Planta principal
+                    </MenuItem>
+                    <MenuItem value="Sucursal Mexico">Sucursal México</MenuItem>
+                  </Select>
+                )}
+              />
+            </FormControl>
+          </Stack>
+
+          {/* Button */}
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            fullWidth
+            size="large"
+          >
+            {id ? "Actualizar" : "Registrar"}
+          </Button>
+        </Stack>
       </form>
-    </section>
+
+      {/* Confirmation dialog */}
+      <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>
+        <DialogTitle>
+          {id ? "Confirmar actualización" : "Confirmar registro"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            {id
+              ? "Los datos se actualizarán tal como los ingresaste"
+              : "Los datos se guardarán tal como los ingresaste"}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConfirmOpen(false)}>Cancelar</Button>
+          <Button onClick={handleConfirm} variant="contained" color="primary">
+            {id ? "Actualizar" : "Aceptar"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
   );
 }
-
-export default CoursesForm;

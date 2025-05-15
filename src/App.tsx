@@ -143,9 +143,9 @@ function App() {
             : "bg-white text-gray-800"
         }
         w-full max-w-screen-2xl mx-auto
-        px-4 py-8 md:px-8 md:py-12
+        px-4 py-8 md:px-8 md:py-12 lg:mt-10
         rounded-2xl shadow-xl
-        flex flex-col justify-between relative
+        flex flex-col justify-between relative 
       `}
     >
       <button

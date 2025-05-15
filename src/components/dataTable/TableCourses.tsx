@@ -98,7 +98,11 @@ export default function TableCourses({
       {isDesktop ? (
         // ---------- Desktop: Table ----------
         <TableContainer sx={{ maxHeight: 500 }}>
-          <Table stickyHeader aria-label="tabla de cursos">
+          <Table
+            stickyHeader
+            aria-label="tabla de cursos"
+            sx={{ tableLayout: "fixed", width: "100%" }}
+          >
             <TableHead>
               <TableRow>
                 {[

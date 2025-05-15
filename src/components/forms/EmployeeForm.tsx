@@ -1,248 +1,265 @@
 import { useEffect } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { toast } from "react-toastify";
-import { useParams, useNavigate } from "react-router-dom";
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
+import { useParams } from "react-router-dom";
+import { Box, Stack, TextField, MenuItem } from "@mui/material";
 import ResponsiveDialog from "../DialogAlert";
+import { toast } from "react-toastify";
 
-interface EmployeeFormProps {
-  employeeNumber?: string;
-  name?: string;
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-  area?: string;
+interface EmployeeFormInputs {
+  employeeNumber: string;
+  name: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  area: string;
 }
 
-function EmployeeForm() {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const showAlert = (text: string) => {
-    toast.success(text, {
-      position: "top-right",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
+interface ApiEmployee {
+  employee: {
+    employeeNumber: string;
+    name: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    area: string;
   };
+  message: string;
+}
 
-  const showError = (error: string) => {
-    toast.error(error, {
-      position: "top-right",
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
-  };
+export default function EmployeeForm({
+  handleClose,
+}: {
+  handleClose: () => void;
+}) {
+  const { id } = useParams<{ id: string }>();
+
   const {
-    register,
+    control,
     handleSubmit,
-    formState: { errors },
     reset,
     setValue,
-  } = useForm<EmployeeFormProps>();
+    formState: { errors },
+  } = useForm<EmployeeFormInputs>({
+    defaultValues: {
+      employeeNumber: "",
+      name: "",
+      firstName: "",
+      lastName: "",
+      email: "",
+      area: "",
+    },
+  });
 
+  const showAlert = (msg: string) =>
+    toast.success(msg, { position: "top-right", autoClose: 3000 });
+  const showError = (msg: string) =>
+    toast.error(msg, { position: "top-right", autoClose: 3000 });
+
+  //Load data
   useEffect(() => {
-    const fetchData = async () => {
-      if (id) {
-        try {
-          const response = await fetch(
-            `${import.meta.env.VITE_URL}employees/api/getEmployee/${id}`
-            , {
-              method: "GET",
-              credentials: 'include',
-            }
-          );
-          if (response.ok) {
-            const data = await response.json();
-            setValue("employeeNumber", data.employee.employeeNumber);
-            setValue("name", data.employee.name);
-            setValue("firstName", data.employee.firstName);
-            setValue("lastName", data.employee.lastName);
-            setValue("email", data.employee.email);
-            setValue("area", data.employee.area);
-          } else {
-            showError("Error al cargar los datos del empleado");
-          }
-        } catch (error) {
-          showError("Error de servidor: " + error);
-        }
-      }
-    };
-    fetchData();
+    if (!id) return;
+    fetch(`${import.meta.env.VITE_URL}employees/api/getEmployee/${id}`, {
+      method: "GET",
+      credentials: "include",
+    })
+      .then((r) => r.json())
+      .then((data: ApiEmployee) => {
+        setValue("employeeNumber", data.employee.employeeNumber);
+        setValue("name", data.employee.name);
+        setValue("firstName", data.employee.firstName);
+        setValue("lastName", data.employee.lastName);
+        setValue("email", data.employee.email);
+        setValue("area", data.employee.area);
+      })
+      .catch(() => showError("Error al cargar datos del empleado"));
   }, [id, setValue]);
 
-  const onSubmit: SubmitHandler<EmployeeFormProps> = async (data) => {
+  // Submit form
+  const onSubmit: SubmitHandler<EmployeeFormInputs> = async (data) => {
     try {
-      const response = id
-        ? await fetch(`${import.meta.env.VITE_URL}employees/api/updateEmployee/${id}`, {
-          method: "PUT",
-          credentials: 'include',
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        })
-        : await fetch(`${import.meta.env.VITE_URL}employees/api/addEmployee`, {
-          method: "POST",
-          credentials: 'include',
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        });
-      if (response.ok) {
-        showAlert(
-          id
-            ? "Datos actualizados correctamente"
-            : "Datos registrados correctamente"
-        );
-        handleNewEmployee();
+      const url = id
+        ? `${import.meta.env.VITE_URL}employees/api/updateEmployee/${id}`
+        : `${import.meta.env.VITE_URL}employees/api/addEmployee`;
+      const method = id ? "PUT" : "POST";
+      const res = await fetch(url, {
+        method,
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      const result: ApiEmployee = await res.json();
+      if (!res.ok) throw new Error(result.message);
+      showAlert(result.message);
+      reset();
+      handleClose();
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        showError(e.message);
       } else {
-        showError("Error al actualizar los datos del empleado");
+        showError("Error desconocido");
       }
-    } catch (error) {
-      console.error(error);
-      showError("Error de servidor: " + error);
     }
   };
 
-  const handleNewEmployee = () => {
-    navigate("/employees");
-    reset();
-  };
+  const areas = ["Marketing", "Finanzas", "Desarrollo", "Diseño"];
 
   return (
-    <section className="flex flex-col gap-4 p-4">
-      <h1 className="text-3xl font-bold">Formulario de empleados</h1>
-      <button
-        className="text-blue-900 font-semibold bg-blue-200 p-2 rounded-md hover:bg-blue-300 transition-all duration-300"
-        onClick={() => handleNewEmployee()}
-      >
-        Nuevo registro
-      </button>
-      <form className="flex flex-col gap-4">
-        <label htmlFor="employeeNumber" className="text-blue-900 font-semibold">
-          N° de empleado <span className="text-red-500">*</span>
-        </label>
-        <input
-          className="w-full border-2 border-blue-200 p-2 rounded-md"
-          type="text"
-          placeholder="Ej. EMP001"
-          {...register("employeeNumber", { required: true })}
-          aria-invalid={errors.employeeNumber ? "true" : "false"}
+    <Box
+      component="form"
+      onSubmit={handleSubmit(onSubmit)}
+      sx={{
+        p: { xs: 2, sm: 4 },
+        bgcolor: "background.paper",
+        borderRadius: 2,
+        maxWidth: { xs: "100%", sm: 500 },
+        mx: "auto",
+      }}
+    >
+      <Stack spacing={3}>
+        {/** Employee number **/}
+        <Controller
+          name="employeeNumber"
+          control={control}
+          rules={{
+            required: "N° de empleado es requerido",
+          }}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              label="N° de empleado *"
+              fullWidth
+              size="small"
+              slotProps={{ inputLabel: { shrink: true } }}
+              error={!!errors.employeeNumber}
+              helperText={errors.employeeNumber?.message}
+            />
+          )}
         />
-        {errors.employeeNumber?.type === "required" && (
-          <p role="alert" className="text-red-500 -mt-2 font-semibold text-sm">
-            N° de empleado es requerido
-          </p>
-        )}
 
-        <label htmlFor="name" className="text-blue-900 font-semibold">
-          Nombre <span className="text-red-500">*</span>
-        </label>
-        <input
-          type="text"
-          placeholder="Ej. Ivan"
-          className="w-full border-2 border-blue-200 p-2 rounded-md"
-          {...register("name", { required: true })}
-          aria-invalid={errors.name ? "true" : "false"}
+        {/** Name **/}
+        <Controller
+          name="name"
+          control={control}
+          rules={{ required: "Nombre es requerido" }}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              label="Nombre *"
+              fullWidth
+              size="small"
+              slotProps={{ inputLabel: { shrink: true } }}
+              error={!!errors.name}
+              helperText={errors.name?.message}
+            />
+          )}
         />
-        {errors.name?.type === "required" && (
-          <p role="alert" className="text-red-500 -mt-2 font-semibold text-sm">
-            Nombre del empleado es requerido
-          </p>
-        )}
-        <label htmlFor="firstName" className="text-blue-900 font-semibold">
-          Primer Apellido <span className="text-red-500">*</span>
-        </label>
-        <input
-          type="text"
-          placeholder="Ej. le Roux"
-          className="w-full border-2 border-blue-200 p-2 rounded-md"
-          {...register("firstName", { required: true })}
-          aria-invalid={errors.firstName ? "true" : "false"}
-        />
-        {errors.firstName?.type === "required" && (
-          <p role="alert" className="text-red-500 -mt-2 font-semibold text-sm">
-            Primer Apellido es requerido
-          </p>
-        )}
-        <label htmlFor="lastName" className="text-blue-900 font-semibold">
-          Segundo Apellido <span className="text-red-500">*</span>
-        </label>
-        <input
-          type="text"
-          placeholder="Ej. Perez"
-          className="w-full border-2 border-blue-200 p-2 rounded-md"
-          {...register("lastName", { required: true })}
-          aria-invalid={errors.lastName ? "true" : "false"}
-        />
-        {errors.lastName?.type === "required" && (
-          <p role="alert" className="text-red-500 -mt-2 font-semibold text-sm">
-            Segundo Apellido es requerido
-          </p>
-        )}
 
-        <label htmlFor="area" className="text-blue-900 font-semibold">
-          Área en donde desempeña <span className="text-red-500">*</span>
-        </label>
-        <select
-          {...register("area", { required: true })}
-          className="w-full border-2 border-blue-200 p-2 rounded-md"
-          aria-invalid={errors.area ? "true" : "false"}
-        >
-          <option value="">-- Selecciona una área --</option>
-          <option value="Marketing">Marketing</option>
-          <option value="Finanzas">Finanzas</option>
-          <option value="Desarrollo">Desarrollo</option>
-          <option value="Diseño">Diseño</option>
-        </select>
-        {errors.area?.type === "required" && (
-          <p role="alert" className="text-red-500 -mt-2 font-semibold text-sm">
-            Área en donde desempeña es requerida
-          </p>
-        )}
-
-        <label htmlFor="email" className="text-blue-900 font-semibold">
-          Email <span className="text-red-500">*</span>
-        </label>
-        <input
-          type="email"
-          placeholder="Ej. ivan@gmail.com"
-          className="w-full border-2 border-blue-200 p-2 rounded-md"
-          {...register("email", { required: true })}
-          aria-invalid={errors.email ? "true" : "false"}
+        {/** First name **/}
+        <Controller
+          name="firstName"
+          control={control}
+          rules={{ required: "Primer apellido es requerido" }}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              label="Primer apellido *"
+              fullWidth
+              size="small"
+              slotProps={{ inputLabel: { shrink: true } }}
+              error={!!errors.firstName}
+              helperText={errors.firstName?.message}
+            />
+          )}
         />
-        {errors.email?.type === "required" && (
-          <p role="alert" className="text-red-500 -mt-2 font-semibold text-sm">
-            Email es requerido
-          </p>
-        )}
 
+        {/** Last name **/}
+        <Controller
+          name="lastName"
+          control={control}
+          rules={{ required: "Segundo apellido es requerido" }}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              label="Segundo apellido *"
+              fullWidth
+              size="small"
+              slotProps={{ inputLabel: { shrink: true } }}
+              error={!!errors.lastName}
+              helperText={errors.lastName?.message}
+            />
+          )}
+        />
+
+        {/** Email **/}
+        <Controller
+          name="email"
+          control={control}
+          rules={{
+            required: "Email es requerido",
+            pattern: {
+              value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+              message: "Formato de email inválido",
+            },
+          }}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              label="Email *"
+              type="email"
+              fullWidth
+              size="small"
+              slotProps={{ inputLabel: { shrink: true } }}
+              error={!!errors.email}
+              helperText={errors.email?.message}
+            />
+          )}
+        />
+
+        {/** Area **/}
+        <Controller
+          name="area"
+          control={control}
+          rules={{ required: "Área es requerida" }}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              select
+              label="Área *"
+              fullWidth
+              size="small"
+              slotProps={{ inputLabel: { shrink: true } }}
+              error={!!errors.area}
+              helperText={errors.area?.message}
+            >
+              <MenuItem value="">
+                <em>— Selecciona —</em>
+              </MenuItem>
+              {areas.map((a) => (
+                <MenuItem key={a} value={a}>
+                  {a}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
+        />
+
+        {/** Button Register */}
         <ResponsiveDialog
           iconButton={id ? "Actualizar" : "Registrar"}
-          handleConfirm={handleSubmit(onSubmit)}
           buttonText={id ? "Actualizar" : "Aceptar"}
-          className="text-white font-semibold bg-blue-900 p-2 rounded-md hover:bg-blue-800 transition-all duration-300 mt-6"
-          dialogText={
-            id
-              ? "Los datos actualizados se guardarán en la base de datos tal y como lo ingresaste"
-              : "Los datos se guardarán en la base de datos tal y como lo ingresaste"
-          }
           dialogQuestion={
             id
-              ? "¿Estás seguro de que deseas actualizar este registro?"
-              : "¿Estás seguro de que deseas registrar este formulario?"
+              ? "¿Estás seguro de actualizar este empleado?"
+              : "¿Estás seguro de registrar este empleado?"
           }
+          dialogText={
+            id
+              ? "Los datos se actualizarán tal como los ingresaste."
+              : "Los datos se guardarán tal como los ingresaste."
+          }
+          handleConfirm={handleSubmit(onSubmit)}
         />
-      </form>
-    </section>
+      </Stack>
+    </Box>
   );
 }
-
-export default EmployeeForm;

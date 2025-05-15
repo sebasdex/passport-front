@@ -122,20 +122,104 @@ export default function TableCourses({
               </TableRow>
             </TableHead>
             <TableBody>
-              {slice.map((row) => (
-                <TableRow hover key={row.id}>
-                  <BodyCell>{row.courseName}</BodyCell>
-                  <BodyCell>{row.description}</BodyCell>
-                  <BodyCell>{row.place}</BodyCell>
-                  <BodyCell>{fmtDate(row.startDate)}</BodyCell>
-                  <BodyCell>
-                    {row.endDate ? fmtDate(row.endDate) : "Pendiente"}
-                  </BodyCell>
-                  <BodyCell>{row.instructor}</BodyCell>
-                  <BodyCell>
+              {slice.length > 0 ? (
+                slice.map((row) => (
+                  <TableRow hover key={row.id}>
+                    <BodyCell>{row.courseName}</BodyCell>
+                    <BodyCell>{row.description}</BodyCell>
+                    <BodyCell>{row.place}</BodyCell>
+                    <BodyCell>{fmtDate(row.startDate)}</BodyCell>
+                    <BodyCell>
+                      {row.endDate ? fmtDate(row.endDate) : "Pendiente"}
+                    </BodyCell>
+                    <BodyCell>{row.instructor}</BodyCell>
+                    <BodyCell>
+                      {`${row.student.name} ${row.student.firstName} ${row.student.lastName}`}
+                    </BodyCell>
+                    <BodyCell>
+                      <Box
+                        component="span"
+                        sx={{
+                          bgcolor: row.approved ? "success.main" : "error.main",
+                          color: "common.white",
+                          p: 0.5,
+                          borderRadius: 0.5,
+                          fontSize: "0.75rem",
+                        }}
+                      >
+                        {row.approved ? "Aprobado" : "Denegado"}
+                      </Box>
+                    </BodyCell>
+                    <BodyCell align="center">
+                      <IconButton onClick={() => onEdit(row.id)} size="small">
+                        <EditIcon fontSize="small" />
+                      </IconButton>
+                    </BodyCell>
+                    <BodyCell align="center">
+                      <DialogAlert
+                        iconButton={
+                          <IconButton size="small">
+                            <DeleteIcon fontSize="small" />
+                          </IconButton>
+                        }
+                        dialogQuestion="¿Deseas eliminar este curso?"
+                        dialogText="Esta acción es irreversible."
+                        buttonText="Eliminar"
+                        buttonColorText="error"
+                        handleConfirm={() => onDelete(row.id)}
+                      />
+                    </BodyCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={10}
+                    align="center"
+                    sx={{ py: 4, color: "text.secondary" }}
+                  >
+                    No se encontraron cursos
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      ) : (
+        // ---------- Mobile ----------
+        <Stack spacing={2}>
+          {slice.length > 0 ? (
+            slice.map((row) => (
+              <Card key={row.id} variant="outlined">
+                <CardContent sx={{ p: 2 }}>
+                  <Typography variant="subtitle1" fontWeight="bold">
+                    {row.courseName}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    gutterBottom
+                    noWrap
+                  >
+                    {row.place} · {fmtDate(row.startDate)}
+                    {row.endDate && ` - ${fmtDate(row.endDate)}`}
+                  </Typography>
+                  <Typography variant="body2" noWrap>
+                    {row.description}
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    display="block"
+                    mt={1}
+                  >
+                    Instructor: {row.instructor}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    Empleado:{" "}
                     {`${row.student.name} ${row.student.firstName} ${row.student.lastName}`}
-                  </BodyCell>
-                  <BodyCell>
+                  </Typography>
+                  <Box mt={1}>
                     <Box
                       component="span"
                       sx={{
@@ -148,13 +232,11 @@ export default function TableCourses({
                     >
                       {row.approved ? "Aprobado" : "Denegado"}
                     </Box>
-                  </BodyCell>
-                  <BodyCell align="center">
+                  </Box>
+                  <Stack direction="row" spacing={1} mt={2}>
                     <IconButton onClick={() => onEdit(row.id)} size="small">
                       <EditIcon fontSize="small" />
                     </IconButton>
-                  </BodyCell>
-                  <BodyCell align="center">
                     <DialogAlert
                       iconButton={
                         <IconButton size="small">
@@ -167,79 +249,15 @@ export default function TableCourses({
                       buttonColorText="error"
                       handleConfirm={() => onDelete(row.id)}
                     />
-                  </BodyCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      ) : (
-        // ---------- Mobile ----------
-        <Stack spacing={2}>
-          {slice.map((row) => (
-            <Card key={row.id} variant="outlined">
-              <CardContent sx={{ p: 2 }}>
-                <Typography variant="subtitle1" fontWeight="bold">
-                  {row.courseName}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  gutterBottom
-                  noWrap
-                >
-                  {row.place} · {fmtDate(row.startDate)}
-                  {row.endDate && ` - ${fmtDate(row.endDate)}`}
-                </Typography>
-                <Typography variant="body2" noWrap>
-                  {row.description}
-                </Typography>
-                <Typography
-                  variant="caption"
-                  color="text.secondary"
-                  display="block"
-                  mt={1}
-                >
-                  Instructor: {row.instructor}
-                </Typography>
-                <Typography variant="caption" color="text.secondary">
-                  Empleado:{" "}
-                  {`${row.student.name} ${row.student.firstName} ${row.student.lastName}`}
-                </Typography>
-                <Box mt={1}>
-                  <Box
-                    component="span"
-                    sx={{
-                      bgcolor: row.approved ? "success.main" : "error.main",
-                      color: "common.white",
-                      p: 0.5,
-                      borderRadius: 0.5,
-                      fontSize: "0.75rem",
-                    }}
-                  >
-                    {row.approved ? "Aprobado" : "Denegado"}
-                  </Box>
-                </Box>
-                <Stack direction="row" spacing={1} mt={2}>
-                  <IconButton onClick={() => onEdit(row.id)} size="small">
-                    <EditIcon fontSize="small" />
-                  </IconButton>
-                  <DialogAlert
-                    iconButton={
-                      <IconButton size="small">
-                        <DeleteIcon fontSize="small" />
-                      </IconButton>
-                    }
-                    dialogQuestion="¿Deseas eliminar este curso?"
-                    dialogText="Esta acción es irreversible."
-                    buttonText="Eliminar"
-                    buttonColorText="error"
-                    handleConfirm={() => onDelete(row.id)}
-                  />
-                </Stack>
-              </CardContent>
-            </Card>
-          ))}
+                  </Stack>
+                </CardContent>
+              </Card>
+            ))
+          ) : (
+            <Typography align="center" color="text.secondary" sx={{ py: 4 }}>
+              No se encontraron cursos
+            </Typography>
+          )}
         </Stack>
       )}
 

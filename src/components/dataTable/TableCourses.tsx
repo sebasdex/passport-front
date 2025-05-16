@@ -116,8 +116,8 @@ export default function TableCourses({
                   "Aprobado",
                   "",
                   "",
-                ].map((label) => (
-                  <HeaderCell key={label}>{label}</HeaderCell>
+                ].map((label, i) => (
+                  <HeaderCell key={i}>{label}</HeaderCell>
                 ))}
               </TableRow>
             </TableHead>

@@ -1,5 +1,5 @@
 
-/api/*    https://backend-passpor.vercel.app/:splat    200!
+/api/*    https://backend-passport.vercel.app/:splat    200!
 
 
 /*        /index.html                              200

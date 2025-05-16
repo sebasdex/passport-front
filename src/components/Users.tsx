@@ -45,7 +45,7 @@ export default function Users() {
   // Fetch
   const fetchUsers = useCallback(async () => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_URL}users/api/getUsers`, {
+      const res = await fetch(`/api/users/api/getUsers`, {
         method: "GET",
         credentials: "include",
       });
@@ -66,7 +66,7 @@ export default function Users() {
     async (userId: number) => {
       try {
         const res = await fetch(
-          `${import.meta.env.VITE_URL}users/api/deleteUser/${userId}`,
+          `/api/users/api/deleteUser/${userId}`,
           { method: "DELETE", credentials: "include" }
         );
         if (!res.ok) throw new Error();

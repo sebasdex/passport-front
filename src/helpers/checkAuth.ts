@@ -1,6 +1,6 @@
 const checkAuth = async () : Promise<{ isAuthenticated: boolean, user?: { role: string | null, employeeId: number | null } }> => {
     try {
-        const response = await fetch(`${import.meta.env.VITE_URL}auth/api/checkSession`, {
+        const response = await fetch(`/api/auth/api/checkSession`, {
             method: 'GET',
             credentials: 'include', 
         });

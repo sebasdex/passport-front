@@ -58,7 +58,7 @@ export default function EmployeeForm({
   //Load data
   useEffect(() => {
     if (!id) return;
-    fetch(`${import.meta.env.VITE_URL}employees/api/getEmployee/${id}`, {
+    fetch(`/api/employees/api/getEmployee/${id}`, {
       method: "GET",
       credentials: "include",
     })
@@ -78,8 +78,8 @@ export default function EmployeeForm({
   const onSubmit: SubmitHandler<EmployeeFormInputs> = async (data) => {
     try {
       const url = id
-        ? `${import.meta.env.VITE_URL}employees/api/updateEmployee/${id}`
-        : `${import.meta.env.VITE_URL}employees/api/addEmployee`;
+        ? `/api/employees/api/updateEmployee/${id}`
+        : `/api/employees/api/addEmployee`;
       const method = id ? "PUT" : "POST";
       const res = await fetch(url, {
         method,

@@ -40,7 +40,7 @@ export default function Employees() {
   const fetchEmployees = useCallback(async () => {
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_URL}employees/api/getEmployees`,
+        `/api/employees/api/getEmployees`,
         { method: "GET", credentials: "include" }
       );
       const data = await res.json();
@@ -60,9 +60,7 @@ export default function Employees() {
     async (employeeId: number) => {
       try {
         const res = await fetch(
-          `${
-            import.meta.env.VITE_URL
-          }employees/api/deleteEmployee/${employeeId}`,
+          `/api/employees/api/deleteEmployee/${employeeId}`,
           { method: "DELETE", credentials: "include" }
         );
         const result = await res.json();

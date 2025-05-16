@@ -72,7 +72,7 @@ export default function UsersForm({
 
   //Load employees
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_URL}employees/api/getEmployees`, {
+    fetch(`/api/employees/api/getEmployees`, {
       method: "GET",
       credentials: "include",
     })
@@ -84,7 +84,7 @@ export default function UsersForm({
   // Load user data if editing
   useEffect(() => {
     if (!id) return;
-    fetch(`${import.meta.env.VITE_URL}users/api/getUser/${id}`, {
+    fetch(`/api/users/api/getUser/${id}`, {
       method: "GET",
       credentials: "include",
     })
@@ -126,8 +126,8 @@ export default function UsersForm({
 
     try {
       const url = id
-        ? `${import.meta.env.VITE_URL}users/api/updateUser/${id}`
-        : `${import.meta.env.VITE_URL}users/api/addUser`;
+        ? `/api/users/api/updateUser/${id}`
+        : `/api/users/api/addUser`;
       const method = id ? "PUT" : "POST";
       const res = await fetch(url, {
         method,

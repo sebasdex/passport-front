@@ -48,7 +48,7 @@ export default function Courses() {
   const fetchCourses = useCallback(async () => {
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_URL}courses/api/getCourse`,
+        `/api/courses/api/getCourse`,
         { method: "GET", credentials: "include" }
       );
       const data = await res.json();
@@ -68,7 +68,7 @@ export default function Courses() {
   const handleDelete = useCallback(async (courseId: number) => {
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_URL}courses/api/deleteCourse/${courseId}`,
+        `/api/courses/api/deleteCourse/${courseId}`,
         { method: "DELETE", credentials: "include" }
       );
       if (!res.ok) throw new Error();

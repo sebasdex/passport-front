@@ -23,7 +23,7 @@ export default function LogInForm() {
 
   const onSubmit: SubmitHandler<userProps> = async (data) => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_URL}auth/api/login`, {
+      const res = await fetch(`/api/auth/api/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

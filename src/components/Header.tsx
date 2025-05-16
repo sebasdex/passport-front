@@ -71,7 +71,7 @@ const Header: React.FC = () => {
     setMobileOpen(false);
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_URL}auth/api/logout`,
+        `/api/auth/api/logout`,
         {
           method: "POST",
           credentials: "include",

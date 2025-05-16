@@ -81,7 +81,7 @@ export default function CoursesForm({
     (async () => {
       try {
         const res = await fetch(
-          `${import.meta.env.VITE_URL}courses/api/getCourse/${id}`,
+          `/api/courses/api/getCourse/${id}`,
           { method: "GET", credentials: "include" }
         );
         if (!res.ok) {
@@ -118,7 +118,7 @@ export default function CoursesForm({
     (async () => {
       try {
         const res = await fetch(
-          `${import.meta.env.VITE_URL}employees/api/getEmployees`,
+          `/api/employees/api/getEmployees`,
           { method: "GET", credentials: "include" }
         );
         const { employees } = await res.json();
@@ -134,8 +134,8 @@ export default function CoursesForm({
     if (data.studentId) data.studentId = Number(data.studentId);
     try {
       const url = id
-        ? `${import.meta.env.VITE_URL}courses/api/updateCourse/${id}`
-        : `${import.meta.env.VITE_URL}courses/api/addCourse`;
+        ? `/api/courses/api/updateCourse/${id}`
+        : `/api/courses/api/addCourse`;
       const method = id ? "PUT" : "POST";
       const res = await fetch(url, {
         method,

@@ -70,7 +70,7 @@ function App() {
   useEffect(() => {
     const verifyAuth = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_URL}`, {
+        const response = await fetch(`/api/`, {
           method: "GET",
           credentials: "include",
         });
@@ -89,7 +89,7 @@ function App() {
   useEffect(() => {
     try {
       const response = fetch(
-        `${import.meta.env.VITE_URL}courses/api/getCourse`,
+        `/api/courses/api/getCourse`,
         {
           method: "GET",
           credentials: "include",

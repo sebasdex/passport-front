@@ -14,7 +14,8 @@
       "minimatch": "^9.0.7",
       "brace-expansion": "^2.0.2",
       "esbuild": "^0.25.0",
-      "rollup": "^4.59.0"
+      "rollup": "^4.59.0",
+      "flatted": "^3.4.2"
     }
   },
   "dependencies": {
